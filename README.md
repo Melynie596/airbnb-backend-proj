@@ -3,7 +3,7 @@
 
 ## Database Schema Design
 
-![Alt text](Screenshot%202023-05-30%20173110.png)
+![Screenshot 2023-05-30 173110](https://github.com/Melynie596/airbnb-backend-proj/assets/110128527/21e58378-598d-4728-a97a-e0b25c1b996d)
 
 https://dbdiagram.io/d/6476a3007764f72fcf2325a3
 
