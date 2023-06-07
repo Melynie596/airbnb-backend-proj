@@ -44,4 +44,15 @@ router.post(
   }
 );
 
+// Log out
+router.delete(
+  '/',
+  (_req, res) => {
+    res.clearCookie('token');
+    return res.json({ message: 'success' });
+  }
+);
+
+//JfzQJ8Qh-hL_pKpgeeXou-UlWVpKE3bYkFdY
+
 module.exports = router;
