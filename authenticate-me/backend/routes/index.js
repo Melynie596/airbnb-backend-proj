@@ -20,13 +20,16 @@ router.use(restoreUser);
 //   res.cookie('XSRF-TOKEN', req.csrfToken());
 //   res.send('Hello World!');
 // });
-// router.get("/api/csrf/restore", (req, res) => {
-//     const csrfToken = req.csrfToken();
-//     res.cookie("XSRF-TOKEN", csrfToken);
-//     res.status(200).json({
-//       'XSRF-Token': csrfToken
-//     });
-//   });
+router.get("/api/csrf/restore", (req, res) => {
+    const csrfToken = req.csrfToken();
+    res.cookie("XSRF-TOKEN", csrfToken);
+    res.status(200).json({
+      'XSRF-Token': csrfToken
+    });
+  });
+
+  //Ge292jMc-ZahYDb-rtyr2GlKvfiDaY8lSkBI
+
 // GET /api/set-token-cookie
 // router.get('/set-token-cookie', async (_req, res) => {
 //   const user = await User.findOne({
