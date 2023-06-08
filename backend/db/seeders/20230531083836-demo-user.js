@@ -14,40 +14,22 @@ module.exports = {
         email: 'demo@user.io',
         username: 'Demo-lition',
         hashedPassword: bcrypt.hashSync('password'),
-        firstName: {
-          type: Sequelize.STRING(30),
-          allowNull: false
-        },
-        lastName: {
-          type: Sequelize.STRING(30),
-          allowNull: false
-        },
+        firstName: 'Demo',
+        lastName: 'lition',
       },
       {
         email: 'user1@user.io',
         username: 'FakeUser1',
         hashedPassword: bcrypt.hashSync('password2'),
-        firstName: {
-          type: Sequelize.STRING(30),
-          allowNull: false
-        },
-        lastName: {
-          type: Sequelize.STRING(30),
-          allowNull: false
-        },
+        firstName: 'Faker',
+        lastName: 'UserOne',
       },
       {
         email: 'user2@user.io',
         username: 'FakeUser2',
         hashedPassword: bcrypt.hashSync('password3'),
-        firstName: {
-          type: Sequelize.STRING(30),
-          allowNull: false
-        },
-        lastName: {
-          type: Sequelize.STRING(30),
-          allowNull: false
-        },
+        firstName: 'Fake',
+        lastName: 'UserTwo',
       }
     ], {});
   },
