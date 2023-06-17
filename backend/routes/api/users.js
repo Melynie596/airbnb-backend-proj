@@ -30,7 +30,7 @@ const validateSignup = [
 ];
 // Sign up
 router.post(
-  '',
+  '/',
   validateSignup,
   async (req, res) => {
     const { email, password, username, firstName, lastName } = req.body;
@@ -54,5 +54,4 @@ router.post(
 );
 
 
-// SQfOxs2m--_ucqnb9N6QE2EEVdUjOvIm4kqg
 module.exports = router;

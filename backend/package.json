@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "resetdb": "npx dotenv sequelize-cli db:seed:undo:all && npx dotenv sequelize-cli db:migrate:undo:all && npx dotenv sequelize-cli db:migrate && npx dotenv sequelize-cli db:seed:all",
     "sequelize": "sequelize",
     "sequelize-cli": "sequelize-cli",
     "start": "per-env",

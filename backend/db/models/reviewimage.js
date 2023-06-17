@@ -1,7 +1,6 @@
 'use strict';
-const {
-  Model
-} = require('sequelize');
+const { Model, Validator } = require('sequelize');
+const { Sequelize } = require('.');
 module.exports = (sequelize, DataTypes) => {
   class reviewImage extends Model {
     /**
@@ -11,13 +10,25 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      reviewImage.belongsTo(models.review);
+      reviewImage.belongsTo(models.Review);
     }
   }
   reviewImage.init({
-    id: DataTypes.INTEGER,
+    id: {
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
+      primaryKey: true
+    },
     url: DataTypes.STRING,
-    reviewId: DataTypes.INTEGER
+    reviewId: {
+      type: DataTypes.INTEGER,
+      references: {
+        models: 'Review',
+        key: 'id'
+      }
+    },
+    createdAt: DataTypes.DATE,
+    updatedAt: DataTypes.DATE
   }, {
     sequelize,
     modelName: 'reviewImage',

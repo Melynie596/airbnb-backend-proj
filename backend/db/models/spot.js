@@ -1,7 +1,5 @@
 'use strict';
-const {
-  Model
-} = require('sequelize');
+const { Model, Validator } = require('sequelize');
 const { Sequelize } = require('.');
 module.exports = (sequelize, DataTypes) => {
   class Spot extends Model {
@@ -12,11 +10,13 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      Spot.hasMany(models.review,
+      Spot.hasMany(models.Review,
         {foreignKey: 'spotId'});
-      Spot.hasMany(models.boooking,
+      Spot.hasMany(models.Booking,
         {foreignKey: 'spotId'});
-      Spot.belongsTo(models.user);
+      Spot.belongsTo(models.User,
+          {foreignKey: 'id'}
+        );
       Spot.hasMany(models.spotImage,
         {foreignKey: 'spotId'});
     }
@@ -24,10 +24,17 @@ module.exports = (sequelize, DataTypes) => {
   Spot.init({
     id: {
       type: DataTypes.INTEGER,
+      autoIncrement: true,
       primaryKey: true,
       allowNull: false
     },
-    ownerId: DataTypes.INTEGER,
+    ownerId: {
+      type: DataTypes.INTEGER,
+      references: {
+        model: 'User',
+        key: 'id'
+      }
+    },
     address: {
       type: DataTypes.STRING,
       allowNull: false
@@ -36,32 +43,20 @@ module.exports = (sequelize, DataTypes) => {
     state: DataTypes.STRING,
     country: DataTypes.STRING,
     lat: {
-      type: DataTypes.FLOAT,
-      validate: {
-        isNumeric: true
-      }
+      type: DataTypes.FLOAT
     },
     lng:  {
-      type: DataTypes.FLOAT,
-      validate: {
-        isNumeric: true
-      }
+      type: DataTypes.FLOAT
     },
     name: DataTypes.STRING,
     description: DataTypes.TEXT,
     price: {
       type: DataTypes.FLOAT,
-      allowNull: false,
-      validate: {
-        isNumeric: true
-      }
+      allowNull: false
     },
     previewImage: DataTypes.STRING,
     avgRating: {
-      type: DataTypes.FLOAT,
-      validate: {
-        len: [1, 5]
-      }
+      type: DataTypes.FLOAT
     },
     createdAt: DataTypes.DATE,
     updatedAt: DataTypes.DATE
