@@ -122,7 +122,7 @@ router.post(
             })
         }
 
-        const addImage = await spotImage.create({
+        const addImage = await SpotImage.create({
                 url,
                 preview,
                 spotId: spotId

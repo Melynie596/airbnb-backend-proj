@@ -2,7 +2,7 @@ const express = require('express');
 const bcrypt = require('bcryptjs');
 
 const { setTokenCookie, requireAuth } = require('../../utils/auth');
-const { User, Review, Spot, reviewImage } = require('../../db/models');
+const { User, Review, Spot, ReviewImage } = require('../../db/models');
 
 const router = express.Router();
 
@@ -133,7 +133,7 @@ router.post(
     '/:reviewId/images',
     requireAuth,
     async(req, res, next) => {
-        const url = req.body;
+        const url = req.body.url;
         const reviewId = req.params.reviewId;
 
         const review = await Review.findOne({ where: { id: reviewId}});
@@ -144,16 +144,16 @@ router.post(
             })
         }
 
-        const reviewImages = await reviewImage.findOne({where : {reviewId: reviewId}});
+        const reviewImages = await ReviewImage.findAll({where : {reviewId: reviewId}});
 
 
-        if(reviewImages.url.length === 10) {
+        if(reviewImages.length === 10) {
             return res.status(403).json({
                 message: "Maximum number of images for this resource was reached"
             })
         }
 
-        const addImage = await reviewImage.create({ url });
+        const addImage = await ReviewImage.create({ url });
 
         return res.status(200).json(addImage);
     }
@@ -218,7 +218,7 @@ router.delete(
         const reviewId = req.params.reviewId;
         const imageId = req.params.imageId;
 
-        const reviewImages = await reviewImage.findOne({
+        const reviewImages = await ReviewImage.findOne({
             where: {
                 id: imageId,
                 reviewId: reviewId
