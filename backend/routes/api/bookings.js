@@ -170,6 +170,7 @@ router.put(
     requireAuth,
     validateBooking,
     async (req, res, next) => {
+        const userId = req.user.id;
         const { startDate, endDate } = req.body;
         const bookingId = req.params.bookingId;
 
@@ -209,14 +210,21 @@ router.put(
             }
         }
 
-        booking.set({
-            startDate,
-            endDate
-        });
+        if (userId === booking.userId) {
+            booking.set({
+                startDate,
+                endDate
+            });
 
-        booking.save();
+            await booking.save();
 
-        return res.status(200).json(booking);
+            return res.status(200).json(booking);
+        } else {
+            return res.status(403).json({
+                message: "Forbidden!"
+            })
+        }
+
     }
 );
 
@@ -226,6 +234,7 @@ router.delete(
     '/:bookingId',
     requireAuth,
     async (req, res, next) => {
+        const userId = req.user.id;
         const bookingId = req.params.bookingId;
 
         const booking = await Booking.findOne({where: {id: bookingId}});
@@ -242,9 +251,16 @@ router.delete(
             })
         }
 
-        booking.destroy();
+        if (userId === booking.userId){
+            await booking.destroy();
 
-        res.status(200).json({message: "successfully deleted"});
+            res.status(200).json({message: "successfully deleted"});
+
+        } else {
+            return res.status(403).json({
+                message: "Forbidden"
+            })
+        }
     }
 );
 

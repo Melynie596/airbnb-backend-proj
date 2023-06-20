@@ -47,7 +47,7 @@ router.get(
                 },
                 {
                     model: User,
-                    attributes: ['id', 'firstName', 'lastname']
+                    attributes: ['id', 'firstName', 'lastName']
                 }
             ],
             group: ['Spot.id', 'Review.id', 'User.id', 'ReviewImages.id']
@@ -105,7 +105,10 @@ router.post(
             })
         }
 
-        const existingReview = await Review.findOne({where: {userId: userId}});
+        const existingReview = await Review.findOne({where: {
+            userId: userId,
+            spotId: spotId
+        }});
 
         if (existingReview) {
           return res.status(500).json({
