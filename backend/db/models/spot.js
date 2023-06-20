@@ -55,7 +55,7 @@ module.exports = (sequelize, DataTypes) => {
     previewImage: {
       type: DataTypes.STRING,
       references: {
-        model: "spotImage",
+        model: "SpotImage",
         key: 'preview'
       }
     },
