@@ -1,5 +1,6 @@
 'use strict';
 const bcrypt = require("bcryptjs");
+const Sequelize = require('sequelize')
 
 let options = {};
 if (process.env.NODE_ENV === 'production') {
