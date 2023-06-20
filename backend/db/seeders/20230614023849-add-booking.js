@@ -1,6 +1,7 @@
 'use strict';
 const bcrypt = require("bcryptjs");
-const Sequelize = require('sequelize')
+// const Sequelize = require('sequelize');
+const { sequelize } = require("../models");
 
 let options = {};
 if (process.env.NODE_ENV === 'production') {
@@ -19,7 +20,7 @@ module.exports = {
      *   isBetaMember: false
      * }], {});
     */
-   options.tableName = 'bookings'
+   options.tableName = 'Bookings'
    await queryInterface.bulkInsert(options, [
     { id: 1,
       spotId: 1,
@@ -44,7 +45,7 @@ module.exports = {
      * Example:
      * await queryInterface.bulkDelete('People', null, {});
      */
-    options.tableName = 'bookings'
+    options.tableName = 'Bookings'
     const Op = Sequelize.Op;
     await queryInterface.bulkDelete(options, {
       id: { [Op.in]: [1, 2]}
