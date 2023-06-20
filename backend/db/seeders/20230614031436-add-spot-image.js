@@ -48,4 +48,4 @@ module.exports = {
       id: { [Op.in]: [1, 2]}
     }, {})
   }
-};S
+};
