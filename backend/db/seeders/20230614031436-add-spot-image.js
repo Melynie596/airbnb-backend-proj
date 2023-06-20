@@ -24,13 +24,13 @@ module.exports = {
       id: 1,
       url: 'jsdgkjahdj',
       spotId: 1,
-      preview: 'sdjkghaskjdhg'
+      preview: false
     },
     {
       id: 2,
       url: 'jsdgkjahdj',
       spotId: 2,
-      preview: 'sdjkghaskjdhg'
+      preview: true
     }
    ], {})
   },

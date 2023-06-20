@@ -22,7 +22,7 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       preview: {
-        type: Sequelize.STRING
+        type: Sequelize.BOOLEAN
       },
       createdAt: {
         allowNull: false,
