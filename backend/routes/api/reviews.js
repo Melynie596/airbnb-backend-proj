@@ -2,8 +2,7 @@ const express = require('express');
 const bcrypt = require('bcryptjs');
 
 const { setTokenCookie, requireAuth } = require('../../utils/auth');
-const { User, Review, Spot } = require('../../db/models');
-const ReviewImage = require('../../db/models/reviewimage');
+const { User, Review, Spot, reviewImage } = require('../../db/models');
 
 const router = express.Router();
 
@@ -219,20 +218,20 @@ router.delete(
         const reviewId = req.params.reviewId;
         const imageId = req.params.imageId;
 
-        const reviewImage = await ReviewImage.findOne({
+        const reviewImages = await reviewImage.findOne({
             where: {
                 id: imageId,
                 reviewId: reviewId
             }
         });
 
-        if (!reviewImage) {
+        if (!reviewImages) {
             return res.status(404).json({
                 message: "Review Image couldn't be found"
             })
         }
 
-        reviewImage.destroy();
+        reviewImages.destroy();
 
         return res.status(200).json({message: "successfully deleted"});
     }

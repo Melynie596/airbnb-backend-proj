@@ -25,14 +25,12 @@ module.exports = {
         allowNull: false
       },
       spotId: {
-        type: {
           type: Sequelize.INTEGER,
           references: {
             model: "Spots",
             key: "id"
           },
           allowNull: false
-        }
       },
       review: {
         type: Sequelize.TEXT

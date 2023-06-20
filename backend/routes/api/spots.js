@@ -149,22 +149,6 @@ router.get(
 
         const spots = await Spot.findAll({
             where: { ownerId: userId}
-            // include: [
-            //     {
-            //         model: 'spotImage',
-            //         attributes: ['preview']
-            //     },
-            //     {
-            //         model: 'Review',
-            //         attributes: []
-            //     }
-            // ],
-            // attributes: {
-            //     include: [
-            //         [Sequelize.fn('AVG', Sequelize.col('Reviews.stars')), 'avgRating']
-            //     ]
-            // },
-            // group: ['Spot.id']
         });
 
 
