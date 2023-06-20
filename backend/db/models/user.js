@@ -7,16 +7,22 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       User.hasMany(models.Spot,
-        {foreignKey: 'ownerId'});
+        {foreignKey: 'ownerId', onDelete: 'CASCADE', hooks: true});
       User.hasMany(models.Review,
-        {foreignKey: 'ownerId'});
-      User.hasHooks(models.Booking,
-         {foreignKey: 'ownerId'});
+        {foreignKey: 'userId'});
+      User.hasMany(models.Booking,
+         {foreignKey: 'userId'});
     }
   };
 
   User.init(
     {
+      id: {
+        allowNull: false,
+        autoIncrement: true,
+        primaryKey: true,
+        type: DataTypes.INTEGER
+      },
       username: {
         type: DataTypes.STRING,
         allowNull: false,

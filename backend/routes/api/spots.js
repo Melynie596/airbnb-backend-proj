@@ -1,12 +1,12 @@
 const express = require('express');
-const { Op } = require('sequelize');
+const Sequelize = require('sequelize');
 const bcrypt = require('bcryptjs');
 
 const { setTokenCookie, requireAuth } = require('../../utils/auth');
-const { Spot, sequelize } = require('../../db/models');
+const { Spot, sequelize, spotImage } = require('../../db/models');
 const { check } = require('express-validator');
 const { handleValidationErrors } = require('../../utils/validation');
-const { spotImage } = require('../../db/models');
+const { route } = require('./reviews');
 const router = express.Router();
 
 const validateSpot = [
@@ -45,7 +45,8 @@ const validateSpot = [
     check('price')
         .exists({checkFalsy: true})
         .isCurrency()
-        .withMessage('Price per day is required')
+        .withMessage('Price per day is required'),
+    handleValidationErrors
 ];
 
 //get all spots
@@ -73,7 +74,7 @@ router.get(
             ]
         });
 
-        return res.status(200).json(spots);
+        return res.status(200).json({Spots: spots});
     }
 );
 
@@ -116,20 +117,24 @@ router.post(
         const { url, preview } = req.body;
 
         if (!spotId) {
-            const err = new Error("Spot couldn't be found");
-            err.status = 404;
-            err.message = "Spot couldn't be found";
-
-            return next(err);
+            return res.status(404).json({
+                message: "Spot couldn't be found"
+            })
         }
 
         const addImage = await spotImage.create({
-
                 url,
-                preview
+                preview,
+                spotId: spotId
              });
 
-         return res.status(200).json(addImage);
+        const image = {
+            id: addImage.id,
+            url: addImage.url,
+            preview: addImage.preview
+        }
+
+         return res.status(200).json(image);
 
     }
 );
@@ -140,13 +145,30 @@ router.get(
     '/:userId',
     requireAuth,
     async (req, res) => {
-        const ownerId = req.user.id;
+        const userId = req.user.id;
 
         const spots = await Spot.findAll({
-            where: { ownerId: ownerId}
+            where: { ownerId: userId}
+            // include: [
+            //     {
+            //         model: 'spotImage',
+            //         attributes: ['preview']
+            //     },
+            //     {
+            //         model: 'Review',
+            //         attributes: []
+            //     }
+            // ],
+            // attributes: {
+            //     include: [
+            //         [Sequelize.fn('AVG', Sequelize.col('Reviews.stars')), 'avgRating']
+            //     ]
+            // },
+            // group: ['Spot.id']
         });
 
-        return res.status(200).json(spots);
+
+        return res.status(200).json({Spots: spots});
     }
 
 
@@ -159,7 +181,25 @@ router.get(
     async (req, res) => {
         const { spotId } = req.params.spotId;
 
-        const spot = await Spot.findByPk(spotId);
+        const spot = await Spot.findByPk(spotId, {
+            include: [
+                {
+                    model: 'spotImages',
+                    attributes: ['id', 'url', 'preview']
+                },
+                {
+                    model: 'User',
+                    as: 'Owner',
+                    attributes: ['id', 'firstName', 'lastName']
+                }
+            ]
+        });
+
+        if(!spot) {
+            return res.status(404).json({
+                message: "Spot couldn't be found"
+            })
+        }
 
         return res.status(200).json(spot);
     }
@@ -178,6 +218,12 @@ router.put(
         const spot = await Spot.findOne({
             where: {id: spotId}
         });
+
+        if(!spot) {
+            return res.status(404).json({
+                message: "Spot couldn't be found"
+            })
+        }
 
         spot.set({
             address: address,
@@ -198,6 +244,31 @@ router.put(
     }
 );
 
+// delete a spot image
+router.delete(
+    '/:spotId/:imageId',
+    requireAuth,
+    async (req, res, next) => {
+        const spotId = req.params.spotId;
+        const imageId = req.params.imageId;
+
+        const image = await spotImage.findOne({ where : {
+            id: imageId,
+            spotId: spotId
+        }});
+
+        if (!image) {
+           return res.status(404).json({
+            message: "Spot Image couldn't be found"
+           })
+        }
+
+        image.destroy();
+
+        res.status(200).json({message: "successfully deleted"});
+    }
+)
+
 //delete a spot
 router.delete(
     '/:spotId',
@@ -210,11 +281,9 @@ router.delete(
         await spot.destroy();
 
         if (!spot) {
-            const err = new Error("Spot couldn't be found");
-            err.status = 404;
-            err.message = "Spot couldn't be found"
-
-            return next(err);
+            return res.status(404).json({
+                message: "Spot couldn't be found"
+            })
         }
 
         res.status(200).json({message: "successfully deleted"});

@@ -17,10 +17,22 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       userId: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'Users',
+          key: 'id'
+        },
+        allowNull: false
       },
       spotId: {
-        type: Sequelize.INTEGER
+        type: {
+          type: Sequelize.INTEGER,
+          references: {
+            model: 'Spots',
+            key: 'id'
+          },
+          allowNull: false
+        }
       },
       review: {
         type: Sequelize.TEXT

@@ -17,16 +17,19 @@ module.exports = (sequelize, DataTypes) => {
       Review.belongsTo(models.Spot,
         {foreignKey: 'spotId'});
       Review.hasMany(models.reviewImage,
-        {foreignKey: 'reviewId'});
+        {foreignKey: 'reviewId', onDelete: 'CASCADE', hooks: true});
     }
   }
   Review.init({
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
-      allowNull: false
+      allowNull: false,
+      autoIncrement: true
     },
-    userId: DataTypes.INTEGER,
+    userId: {
+      type: DataTypes.INTEGER
+    },
     spotId: DataTypes.INTEGER,
     review: DataTypes.TEXT,
     stars: {
