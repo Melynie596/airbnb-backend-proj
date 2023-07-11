@@ -152,7 +152,7 @@ router.post(
             }
         }
 
-        if (spot.ownerId !== userId){
+        if (spot.ownerId === userId){
             return res.status(200).json(newBooking);
         } else {
             return res.status(400).json({message: "Spots must not belong to the current user"});
@@ -211,7 +211,7 @@ router.put(
         }
 
         if (userId === booking.userId) {
-            booking.set({
+           await booking.set({
                 startDate,
                 endDate
             });

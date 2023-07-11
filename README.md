@@ -1,4 +1,3 @@
-
 # AirBnb Backend Project
 
 ## Database Schema Design
@@ -100,7 +99,7 @@ information.
 - Request
 
   - Method: POST
-  - URL: /login
+  - URL: /session
   - Headers:
     - Content-Type: application/json
   - Body:
@@ -170,7 +169,7 @@ user's information.
 - Request
 
   - Method: POST
-  - URL: /signup
+  - URL: /users
   - Headers:
     - Content-Type: application/json
   - Body:
@@ -307,7 +306,7 @@ Returns all the spots owned (created) by the current user.
 - Request
 
   - Method: GET
-  - URL: /spots/:userId
+  - URL: /users/:userId
   - Body: none
 
 - Successful Response
@@ -542,7 +541,7 @@ Updates and returns an existing spot.
 - Require proper authorization: Spot must belong to the current user
 - Request
 
-  - Method: PATCH
+  - Method: PUT
   - URL: /spots/:spotId
   - Headers:
     - Content-Type: application/json
@@ -672,7 +671,7 @@ Returns all the reviews written by the current user.
 - Request
 
   - Method: GET
-  - URL: /reviews/:userId
+  - URL: /reviews/users/:userId
   - Body: none
 
 - Successful Response
@@ -931,7 +930,7 @@ Update and return an existing review.
 - Require proper authorization: Review must belong to the current user
 - Request
 
-  - Method: PATCH
+  - Method: PUT
   - URL: reviews/:reviewId
   - Headers:
     - Content-Type: application/json

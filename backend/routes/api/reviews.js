@@ -29,7 +29,7 @@ const validateReview = [
 
 // get all reviews of the current user
 router.get(
-    '/:userId',
+    '/users/:userId',
     requireAuth,
     async (req, res) => {
         const userId = req.params.userId;
@@ -137,6 +137,7 @@ router.post(
     requireAuth,
     async(req, res, next) => {
         const url = req.body.url;
+        const userId = req.user.id;
         const reviewId = req.params.reviewId;
 
         const review = await Review.findOne({ where: { id: reviewId}});
@@ -156,9 +157,15 @@ router.post(
             })
         }
 
-        const addImage = await ReviewImage.create({ url });
+        if (userId === review.userId) {
+             const addImage = await ReviewImage.create({ url });
 
-        return res.status(200).json(addImage);
+             return res.status(200).json(addImage);
+        } else {
+            return res.status(403).json({message: "Forbidden"});
+        }
+
+
     }
 );
 
@@ -171,6 +178,7 @@ router.put(
     async(req, res, next) => {
         const { review, stars } = req.body;
         const reviewId = req.params.reviewId;
+        const userId = req.user.id;
 
         const editReview = await Review.findOne({ where: {id: reviewId}});
 
@@ -180,14 +188,19 @@ router.put(
             })
         }
 
-        editReview.set({
-            review: review,
-            stars: stars
-        });
+        if (userId === editReview.userId){
+            await editReview.set({
+                review: review,
+                stars: stars
+            });
 
-        editReview.save();
+           await editReview.save();
 
-        return res.status(200).json(editReview);
+            return res.status(200).json(editReview);
+        } else {
+            return res.status(403).json({message: "Forbidden"});
+        }
+
     }
 );
 
@@ -198,6 +211,7 @@ router.delete(
     requireAuth,
     async (req, res, next) => {
         const reviewId = req.params.reviewId;
+        const userId = req.user.id;
 
         const review = await Review.findOne({ where: {id: reviewId} });
 
@@ -206,10 +220,16 @@ router.delete(
                 message: "Review couldn't be found"
             })
         }
-        await review.destroy();
+
+        if (userId === review.userId){
+            await review.destroy();
+
+            return res.status(200).json({message: "successfully deleted"});
+        } else {
+            return res.status(403).json({message: "Forbidden"})
+        }
 
 
-        return res.status(200).json({message: "successfully deleted"});
     }
 );
 
@@ -220,6 +240,7 @@ router.delete(
     async (req, res, next) => {
         const reviewId = req.params.reviewId;
         const imageId = req.params.imageId;
+        const userId = req.user.id;
 
         const reviewImages = await ReviewImage.findOne({
             where: {
@@ -233,10 +254,17 @@ router.delete(
                 message: "Review Image couldn't be found"
             })
         }
+        const review = await Review.findOne({ where: { id: reviewId}});
 
-        reviewImages.destroy();
+        if (userId === review.userId){
+            await reviewImages.destroy();
 
-        return res.status(200).json({message: "successfully deleted"});
+            return res.status(200).json({message: "successfully deleted"});
+        } else {
+            return res.status(403).json({message: "Forbidden"});
+        }
+
+
     }
 );
 
