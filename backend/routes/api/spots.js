@@ -13,34 +13,50 @@ const validateSpot = [
     check('address')
         .exists({checkFalsy: true})
         .isString()
+        .notEmpty()
+        .trim()
         .withMessage('Street address is required'),
     check('city')
         .exists({checkFalsy: true})
         .isString()
+        .notEmpty()
+        .trim()
         .withMessage('City is required'),
     check('state')
         .exists({checkFalsy: true})
         .isString()
+        .notEmpty()
+        .trim()
         .withMessage('State is required'),
     check('country')
         .exists({checkFalsy: true})
         .isString()
+        .notEmpty()
+        .trim()
         .withMessage('Country is required'),
     check('lat')
         .exists({checkFalsy: true})
         .isNumeric()
-        .withMessage('Latitude is required'),
+        .notEmpty()
+        .trim()
+        .withMessage('Latitude is not valid'),
     check('lng')
         .exists({checkFalsy: true})
         .isNumeric()
-        .withMessage('Longitude is required'),
+        .notEmpty()
+        .trim()
+        .withMessage('Longitude is not valid'),
     check('name')
         .exists({checkFalsy: true})
+        .notEmpty()
+        .trim()
         .isLength({max: 49})
         .withMessage('Name must be less than 50 characters'),
     check('description')
         .exists({checkFalsy: true})
         .isString()
+        .notEmpty()
+        .trim()
         .withMessage('Description is required'),
     check('price')
         .exists({checkFalsy: true})
@@ -98,6 +114,92 @@ router.get(
     }
 );
 
+//get spots of current user
+
+router.get(
+    '/users/:userId',
+    requireAuth,
+    async (req, res) => {
+        const userId = req.user.id;
+
+        const spots = await Spot.findAll({
+            where: { ownerId: userId}
+        });
+
+
+        return res.status(200).json({Spots: spots});
+    }
+
+
+);
+
+//get details of a spot from an id
+
+router.get(
+    '/:spotId',
+    async (req, res) => {
+    //     const { spotId } = req.params.spotId;
+
+    //     const spot = await Spot.findOne(
+    //         {
+    //         where: {id: spotId},
+    //         include: [
+    //             {
+    //                 model: 'spotImages',
+    //                 attributes: ['id', 'url', 'preview']
+    //             },
+    //             {
+    //                 model: 'User',
+    //                 as: 'Owner',
+    //                 attributes: ['id', 'firstName', 'lastName']
+    //             }
+    //         ]
+    //     });
+
+    //     if(!spot) {
+    //         return res.status(404).json({
+    //             message: "Spot couldn't be found"
+    //         })
+    //     }
+
+    //     return res.status(200).json(spot);
+    // }
+    const spotId = req.params.spotId;
+
+    const spot = await Spot.findOne({
+        where: {
+            id: spotId,
+        },
+        include: [
+            {
+                model: Review,
+                attributes: [],
+            },
+            {
+                model: SpotImage,
+                attributes: ["id", "url", "preview"],
+            },
+            {
+                model: User,
+                as: "Owner",
+                attributes: ["id", "firstName", "lastName"],
+            },
+        ],
+        attributes: ["id", "ownerId", "address", "city", "state", "country", "lat", "lng", "name", "description", "price", "createdAt", "updatedAt",
+            [sequelize.fn("COUNT", sequelize.col("Reviews.id")), "numReviews"],
+            [sequelize.fn("ROUND", sequelize.fn("AVG", sequelize.col("stars")), 1),
+                "avgRating",],
+        ],
+        group: ["SpotImages.id", "Spot.id", "Owner.id"]
+    });
+
+    if (spot) {
+        return res.status(200).json(spot);
+    } else {
+        return res.status(404).json({ message: "Spot couldn't be found" });
+    }
+});
+
 //create a spot
 
 router.post(
@@ -121,7 +223,6 @@ router.post(
                 description,
                 price
         });
-
 
         return res.status(201).json(spot);
     }
@@ -169,24 +270,6 @@ router.post(
     }
 );
 
-//get spots of current user
-
-router.get(
-    '/users/:userId',
-    requireAuth,
-    async (req, res) => {
-        const userId = req.user.id;
-
-        const spots = await Spot.findAll({
-            where: { ownerId: userId}
-        });
-
-
-        return res.status(200).json({Spots: spots});
-    }
-
-
-);
 
 //get details of a spot from an id
 
