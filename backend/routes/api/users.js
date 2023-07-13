@@ -15,20 +15,20 @@ const validateSignup = [
     .isEmail()
     .withMessage('Invalid email'),
   check('username')
+    .trim()
     .exists({ checkFalsy: true })
     .notEmpty()
-    .trim()
     .isLength({ min: 4 })
     .withMessage('Username is required'),
   check('firstName')
-    .notEmpty()
     .trim()
-    .isEmail()
+    .notEmpty()
+    .isString()
     .withMessage('First Name is required'),
   check('lastName')
+    .trim()
     .exists({ checkFalsy: true })
     .notEmpty()
-    .trim()
     .withMessage('Last Name is required'),
   handleValidationErrors
 ];
