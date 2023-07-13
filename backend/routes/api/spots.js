@@ -37,7 +37,7 @@ const validateSpot = [
     check('name')
         .exists({checkFalsy: true})
         .isLength({max: 49})
-        .withMessage('Namem must be less than 50 characters'),
+        .withMessage('Name must be less than 50 characters'),
     check('description')
         .exists({checkFalsy: true})
         .isString()
@@ -48,6 +48,11 @@ const validateSpot = [
         .withMessage('Price per day is required'),
     handleValidationErrors
 ];
+
+// console.log(validateSpot);
+
+// whitespace space errors
+
 
 //get all spots
 router.get(
@@ -123,6 +128,7 @@ router.post(
 );
 
 // create image for a spot based on spot id
+// creates image for a spot that doesnt exists
 
 router.post(
     '/:spotId/images',

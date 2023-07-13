@@ -58,6 +58,8 @@ router.get(
     }
 );
 
+// error responses, errors codes, match api docs, edit a spot create, signup (first last name), error bodys to match the docs,
+
 // get all reviews by a spot id
 
 router.get(
