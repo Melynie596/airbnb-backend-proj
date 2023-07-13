@@ -12,39 +12,39 @@ const router = express.Router();
 const validateSpot = [
     check('address')
         .exists({checkFalsy: true})
-        .isString()
         .notEmpty()
         .trim()
+        .isString()
         .withMessage('Street address is required'),
     check('city')
         .exists({checkFalsy: true})
-        .isString()
         .notEmpty()
         .trim()
+        .isString()
         .withMessage('City is required'),
     check('state')
         .exists({checkFalsy: true})
-        .isString()
         .notEmpty()
         .trim()
+        .isString()
         .withMessage('State is required'),
     check('country')
         .exists({checkFalsy: true})
-        .isString()
         .notEmpty()
         .trim()
+        .isString()
         .withMessage('Country is required'),
     check('lat')
         .exists({checkFalsy: true})
-        .isNumeric()
         .notEmpty()
         .trim()
+        .isNumeric()
         .withMessage('Latitude is not valid'),
     check('lng')
         .exists({checkFalsy: true})
-        .isNumeric()
         .notEmpty()
         .trim()
+        .isNumeric()
         .withMessage('Longitude is not valid'),
     check('name')
         .exists({checkFalsy: true})
@@ -54,9 +54,9 @@ const validateSpot = [
         .withMessage('Name must be less than 50 characters'),
     check('description')
         .exists({checkFalsy: true})
-        .isString()
         .notEmpty()
         .trim()
+        .isString()
         .withMessage('Description is required'),
     check('price')
         .exists({checkFalsy: true})
