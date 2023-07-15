@@ -12,8 +12,10 @@ const { handleValidationErrors } = require('../../utils/validation');
 
 const validateReview = [
     check('review')
-    .exists({ checkFalsy: true })
+    .trim()
     .notEmpty()
+    .withMessage('Review text is required')
+    .exists({ checkFalsy: true })
     .withMessage('Review text is required'),
     check('stars')
     .exists({ checkFalsy: true })
@@ -29,10 +31,10 @@ const validateReview = [
 
 // get all reviews of the current user
 router.get(
-    '/users/:userId',
+    '/users',
     requireAuth,
     async (req, res) => {
-        const userId = req.params.userId;
+        const userId = req.user.id;
 
         const review = await Review.findAll({
             where: {userId: userId},
@@ -55,6 +57,8 @@ router.get(
         });
 
         return res.status(200).json(review);
+
+
     }
 );
 
@@ -71,19 +75,23 @@ router.get(
             where: { spotId: spotId},
             include: [
                 {
+                    model: User,
+                    attributes: ['id', 'firstName', 'lastName']
+                },
+                {
                     model: ReviewImage,
                     attributes: ['id', 'url']
                 }
             ]
         });
 
-        if(!reviews) {
+        if(reviews.length === 0) {
             return res.status(404).json({
                 message: "Spot couldn't be found"
             })
         }
 
-        return res.status(200).json(reviews)
+        return res.status(200).json({Reviews: reviews})
     }
 )
 
@@ -120,7 +128,7 @@ router.post(
 
             const newReview = await Review.create({
                 userId: userId,
-                spotId: spotId,
+                spotId: Number(spotId),
                 review,
                 stars
             });
@@ -150,19 +158,27 @@ router.post(
             })
         }
 
-        const reviewImages = await ReviewImage.findAll({where : {reviewId: reviewId}});
-
-
-        if(reviewImages.length === 10) {
-            return res.status(403).json({
-                message: "Maximum number of images for this resource was reached"
-            })
-        }
 
         if (userId === review.userId) {
-             const addImage = await ReviewImage.create({ url });
+            const addImage = await ReviewImage.create({ url });
+            const response = {
+                id: addImage.id,
+                url: addImage.url
+            }
 
-             return res.status(200).json(addImage);
+            await addImage.save();
+
+            const reviewImages = await ReviewImage.findAll({where : {reviewId: reviewId}});
+
+            if(reviewImages.length === 10) {
+                return res.status(403).json({
+                    message: "Maximum number of images for this resource was reached"
+                })
+            }
+
+            console.log(reviewImages);
+
+            return res.status(200).json(response);
         } else {
             return res.status(403).json({message: "Forbidden"});
         }

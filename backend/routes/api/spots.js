@@ -14,50 +14,50 @@ const validateSpot = [
         .trim()
         .exists({checkFalsy: true})
         .notEmpty()
-        .isString()
-        .withMessage('Street address is required'),
+        .withMessage('Street address is required')
+        .isString(),
     check('city')
         .trim()
         .exists({checkFalsy: true})
         .notEmpty()
-        .isString()
-        .withMessage('City is required'),
+        .withMessage('City is required')
+        .isString(),
     check('state')
         .trim()
         .exists({checkFalsy: true})
         .notEmpty()
-        .isString()
-        .withMessage('State is required'),
+        .withMessage('State is required')
+        .isString(),
     check('country')
         .trim()
         .exists({checkFalsy: true})
         .notEmpty()
-        .isString()
-        .withMessage('Country is required'),
+        .withMessage('Country is required')
+        .isString(),
     check('lat')
         .trim()
         .exists({checkFalsy: true})
         .notEmpty()
-        .isNumeric()
-        .withMessage('Latitude is not valid'),
+        .withMessage('Latitude is not valid')
+        .isNumeric(),
     check('lng')
         .trim()
         .exists({checkFalsy: true})
         .notEmpty()
-        .isNumeric()
-        .withMessage('Longitude is not valid'),
+        .withMessage('Longitude is not valid')
+        .isNumeric(),
     check('name')
         .trim()
         .exists({checkFalsy: true})
-        .notEmpty()
+        .notEmpty().withMessage('Name is required')
         .isLength({max: 49})
         .withMessage('Name must be less than 50 characters'),
     check('description')
         .trim()
         .exists({checkFalsy: true})
         .notEmpty()
-        .isString()
-        .withMessage('Description is required'),
+        .withMessage('Description is required')
+        .isString(),
     check('price')
         .exists({checkFalsy: true})
         .isCurrency()
@@ -229,7 +229,6 @@ router.post(
 );
 
 // create image for a spot based on spot id
-// creates image for a spot that doesnt exists
 
 router.post(
     '/:spotId/images',
@@ -239,13 +238,14 @@ router.post(
         const userId = req.user.id;
         const { url, preview } = req.body;
 
-        if (!spotId) {
+        const spot = await Spot.findOne({ where : {ownerId: userId}});
+
+        if (!spot) {
             return res.status(404).json({
                 message: "Spot couldn't be found"
             })
         }
 
-        const spot = await Spot.findOne({ where : {ownerId: userId}});
 
         if (userId === spot.ownerId) {
             const addImage = await SpotImage.create({
@@ -437,7 +437,7 @@ router.delete(
 
         if (userId === spot.ownerId) {
             await spot.destroy();
-            res.status(200).json({message: "successfully deleted"});
+            res.status(200).json({message: "Successfully deleted"});
         }
         else {
             return res.status(403).json({
