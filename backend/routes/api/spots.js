@@ -39,13 +39,15 @@ const validateSpot = [
         .exists({checkFalsy: true})
         .notEmpty()
         .withMessage('Latitude is not valid')
-        .isNumeric(),
+        .isLatLong()
+        .withMessage('Latitude is not valid'),
     check('lng')
         .trim()
         .exists({checkFalsy: true})
         .notEmpty()
         .withMessage('Longitude is not valid')
-        .isNumeric(),
+        .isLatLong()
+        .withMessage('Longitude is not valid'),
     check('name')
         .trim()
         .exists({checkFalsy: true})
@@ -238,7 +240,7 @@ router.post(
         const userId = req.user.id;
         const { url, preview } = req.body;
 
-        const spot = await Spot.findOne({ where : {ownerId: userId}});
+        const spot = await Spot.findOne({ where : {id: spotId}});
 
         if (!spot) {
             return res.status(404).json({
