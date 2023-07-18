@@ -11,13 +11,6 @@ const { check } = require('express-validator');
 const { handleValidationErrors } = require('../../utils/validation');
 const booking = require('../../db/models/booking');
 
-const validateBooking = [
-    check('endDate')
-    .exists({ checkFalsy: true })
-    .notEmpty()
-    .withMessage('Review text is required'),
-    handleValidationErrors
-];
 
 //get all the booking that the current user has made
 
@@ -25,7 +18,7 @@ router.get(
     '/:userId',
     requireAuth,
     async (req, res) => {
-        const userId = req.params.userId;
+        const userId = req.user.id;
 
         const bookings = await Booking.findAll({
             where: {userId: userId},
@@ -49,6 +42,10 @@ router.get(
             ]
         });
 
+        if (userId === req.params.userId) {
+            return res.status(403).json({message: "Forbidden!"})
+        }
+
         return res.status(200).json({Bookings: bookings});
     }
 );
@@ -60,11 +57,12 @@ router.get(
     requireAuth,
     async (req, res, next) => {
         const spotId = req.params.spotId;
+        const userId = req.user.id;
 
 
         // if user is NOT the owner of the spot
-        if (!requireAuth) {
-            const booking = await Booking.findOne({
+
+        const nonOwnerBooking = await Booking.findAll({
                 where: {spotId: spotId},
                 attributes: [
                     'spotId',
@@ -73,31 +71,39 @@ router.get(
                 ]
             });
 
-            return res.status(200).json({Bookings: booking});
-        }
 
-        // if user IS the owner of the spot
-        const booking = await Booking.findOne({
-            where: {spotId: spotId},
-            include: [
-                { model: 'User',
-                 attributes: [
-                    'id',
-                    'firstName',
-                    'lastname'
-                 ]
-            },
+
+            // if user IS the owner of the spot
+            const ownerBooking = await Booking.findAll({
+                where: {spotId: spotId},
+                include: [
+                    { model: 'User',
+                    attributes: [
+                        'id',
+                        'firstName',
+                        'lastname'
+                    ]
+                },
             ]
         });
 
-        if (!spotId) {
+        if (nonOwnerBooking.length === 0 || ownerBooking.length === 0) {
            return res.status(404).json({
             message: "Spot couldn't be found"
            })
         }
 
-        return res.status(200).json({Bookings: booking});
+        for (let bookings of nonOwnerBooking) {
+            if (userId !== bookings.userId){
+                return res.status(200).json({Bookings: nonOwnerBooking});
+            }
+        }
 
+        for (let bookings of ownerBooking) {
+            if (userId === bookings.userId) {
+                return res.status(200).json({Bookings: booking});
+            }
+        }
 
     }
 );
@@ -107,7 +113,6 @@ router.get(
 router.post(
     '/:spotId',
     requireAuth,
-    validateBooking,
     async(req, res, next) => {
         const { startDate, endDate } = req.body;
         const spotId = req.params.spotId;
@@ -138,10 +143,10 @@ router.post(
         const allBookings = await Booking.findAll();
 
         for (let booking of allBookings){
-            const startDate = allBookings.startDate;
-            const endDate = allBookings.endDate;
+            const existingStartDate = booking.startDate;
+            const existingEndDate = booking.endDate;
 
-            if (newBooking.startDate === startDate || newBooking.endDate === endDate ){
+            if (existingStartDate === startDate || existingEndDate === endDate ){
                 return res.status(403).json({
                     message: "Sorry, this spot is already booked for the specified dates",
                     errors: {
@@ -152,23 +157,23 @@ router.post(
             }
         }
 
+
+
         if (spot.ownerId === userId){
             return res.status(200).json(newBooking);
         } else {
             return res.status(400).json({message: "Spots must not belong to the current user"});
         }
 
-
     }
 
-);
+    );
 
-// edit a booking
+    // edit a booking
 
-router.put(
-    '/:bookingId',
+    router.put(
+        '/:bookingId',
     requireAuth,
-    validateBooking,
     async (req, res, next) => {
         const userId = req.user.id;
         const { startDate, endDate } = req.body;
@@ -196,8 +201,8 @@ router.put(
         const allBookings = await Booking.findAll();
 
         for (let booking of allBookings){
-            const existingStartDate = allBookings.startDate;
-            const existingEndDate = allBookings.endDate;
+            const existingStartDate = booking.startDate;
+            const existingEndDate = booking.endDate;
 
             if (startDate === existingStartDate || endDate === existingEndDate ){
                 return res.status(403).json({
@@ -254,7 +259,7 @@ router.delete(
         if (userId === booking.userId){
             await booking.destroy();
 
-            res.status(200).json({message: "successfully deleted"});
+            return res.status(200).json({message: "successfully deleted"});
 
         } else {
             return res.status(403).json({

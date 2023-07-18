@@ -671,7 +671,7 @@ Returns all the reviews written by the current user.
 - Request
 
   - Method: GET
-  - URL: /reviews/users/:userId
+  - URL: /reviews/users
   - Body: none
 
 - Successful Response
