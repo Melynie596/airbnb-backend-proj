@@ -41,10 +41,18 @@ module.exports = (sequelize, DataTypes) => {
     state: DataTypes.STRING,
     country: DataTypes.STRING,
     lat: {
-      type: DataTypes.FLOAT
+      type: DataTypes.FLOAT(11, 10),
+      validate: {
+        min: -90,
+        max: 90
+      }
     },
     lng:  {
-      type: DataTypes.FLOAT
+      type: DataTypes.FLOAT(11, 10),
+      validate: {
+        min: -180,
+        max: 180
+      }
     },
     name: DataTypes.STRING,
     description: DataTypes.TEXT,

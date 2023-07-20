@@ -38,16 +38,22 @@ const validateSpot = [
         .trim()
         .exists({checkFalsy: true})
         .notEmpty()
-        .withMessage('Latitude is not valid')
-        .isLatLong()
         .withMessage('Latitude is not valid'),
+        // .custom(lat => {
+        //     if (lat < -90 || lng > 90 ) {
+        //         throw new Error('Latitude is not valid')
+        //     }
+        // }),
     check('lng')
         .trim()
         .exists({checkFalsy: true})
         .notEmpty()
-        .withMessage('Longitude is not valid')
-        .isLatLong()
         .withMessage('Longitude is not valid'),
+        // .custom(lng => {
+        //     if (lng < -180 || lng > 180 ) {
+        //         throw new Error('Longitude is not valid')
+        //     }
+        // }),
     check('name')
         .trim()
         .exists({checkFalsy: true})
