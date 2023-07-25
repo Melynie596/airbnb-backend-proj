@@ -67,7 +67,7 @@ module.exports = (sequelize, DataTypes) => {
         key: 'preview'
       }
     },
-    avgStarRating: {
+    avgRating: {
       type: DataTypes.FLOAT,
 
     },
