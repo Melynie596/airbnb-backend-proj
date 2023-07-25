@@ -31,7 +31,7 @@ const validateReview = [
 
 // get all reviews of the current user
 router.get(
-    '/users',
+    '/current',
     requireAuth,
     async (req, res) => {
         const userId = req.user.id;
@@ -66,79 +66,80 @@ router.get(
 
 // get all reviews by a spot id
 
-router.get(
-    '/:spotId',
-    async(req, res, next) => {
-        const spotId = req.params.spotId;
+// moved based on new API docs (january cohort) to spots router
+// router.get(
+//     '/:spotId',
+//     async(req, res, next) => {
+//         const spotId = req.params.spotId;
 
-        const reviews = await Review.findAll({
-            where: { spotId: spotId},
-            include: [
-                {
-                    model: User,
-                    attributes: ['id', 'firstName', 'lastName']
-                },
-                {
-                    model: ReviewImage,
-                    attributes: ['id', 'url']
-                }
-            ]
-        });
+//         const reviews = await Review.findAll({
+//             where: { spotId: spotId},
+//             include: [
+//                 {
+//                     model: User,
+//                     attributes: ['id', 'firstName', 'lastName']
+//                 },
+//                 {
+//                     model: ReviewImage,
+//                     attributes: ['id', 'url']
+//                 }
+//             ]
+//         });
 
-        if(reviews.length === 0) {
-            return res.status(404).json({
-                message: "Spot couldn't be found"
-            })
-        }
+//         if(reviews.length === 0) {
+//             return res.status(404).json({
+//                 message: "Spot couldn't be found"
+//             })
+//         }
 
-        return res.status(200).json({Reviews: reviews})
-    }
-)
-
-
-//create a review for a spot based on the spots id
-
-router.post(
-    '/:spotId',
-    requireAuth,
-    validateReview,
-    async (req, res, next) => {
-        const spotId = req.params.spotId;
-        const userId = req.user.id;
-        const { review, stars } = req.body;
-
-        const spot = await Spot.findOne({where: {id: spotId}});
-
-        if (!spot) {
-            return res.status(404).json({
-                message: "Spot couldn't be found"
-            })
-        }
-
-        const existingReview = await Review.findOne({where: {
-            userId: userId,
-            spotId: spotId
-        }});
-
-        if (existingReview) {
-          return res.status(500).json({
-            message: "User already has a review for this spot"
-          })
-        }
-
-            const newReview = await Review.create({
-                userId: userId,
-                spotId: Number(spotId),
-                review,
-                stars
-            });
-
-            return res.status(201).json(newReview);
+//         return res.status(200).json({Reviews: reviews})
+//     }
+// )
 
 
+// //create a review for a spot based on the spots id
 
-    }
-);
+// router.post(
+//     '/:spotId',
+//     requireAuth,
+//     validateReview,
+//     async (req, res, next) => {
+//         const spotId = req.params.spotId;
+//         const userId = req.user.id;
+//         const { review, stars } = req.body;
+
+//         const spot = await Spot.findOne({where: {id: spotId}});
+
+//         if (!spot) {
+//             return res.status(404).json({
+//                 message: "Spot couldn't be found"
+//             })
+//         }
+
+//         const existingReview = await Review.findOne({where: {
+//             userId: userId,
+//             spotId: spotId
+//         }});
+
+//         if (existingReview) {
+//           return res.status(500).json({
+//             message: "User already has a review for this spot"
+//           })
+//         }
+
+//             const newReview = await Review.create({
+//                 userId: userId,
+//                 spotId: Number(spotId),
+//                 review,
+//                 stars
+//             });
+
+//             return res.status(201).json(newReview);
+
+
+
+//     }
+// );
 
 // add an image to a review based on the review's id
 
