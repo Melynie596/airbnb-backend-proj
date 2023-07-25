@@ -42,8 +42,11 @@ router.get(
             ]
         });
 
-        if (userId === req.params.userId) {
-            return res.status(403).json({message: "Forbidden!"})
+        for (let booking of bookings) {
+            if (userId !== booking.userId) {
+                return res.status(403).json({message: "Forbidden!"})
+            }
+
         }
 
         return res.status(200).json({Bookings: bookings});
