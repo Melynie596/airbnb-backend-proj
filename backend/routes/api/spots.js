@@ -314,6 +314,8 @@ router.post(
                 price
         });
 
+        await spot.save()
+
         return res.status(201).json(spot);
     }
 );
@@ -502,6 +504,7 @@ router.post(
 
 
         if (spot.ownerId === userId){
+            await newBooking.save();
             return res.status(200).json(newBooking);
         } else {
             return res.status(400).json({message: "Spots must not belong to the current user"});

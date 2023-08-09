@@ -161,25 +161,27 @@ router.post(
 
 
         if (userId === review.userId) {
-            const addImage = await ReviewImage.create({ url });
-            const response = {
-                id: addImage.id,
-                url: addImage.url
-            }
 
-            await addImage.save();
 
             const reviewImages = await ReviewImage.findAll({where : {reviewId: reviewId}});
 
-            if(reviewImages.length === 10) {
+            if(reviewImages.length > 10) {
                 return res.status(403).json({
                     message: "Maximum number of images for this resource was reached"
                 })
+            } else {
+
+                const addImage = await ReviewImage.create({ url });
+                const response = {
+                    id: addImage.id,
+                    url: addImage.url
+                }
+                await addImage.save();
+
+                // console.log(reviewImages);
+
+                return res.status(200).json(response);
             }
-
-            console.log(reviewImages);
-
-            return res.status(200).json(response);
         } else {
             return res.status(403).json({message: "Forbidden"});
         }
