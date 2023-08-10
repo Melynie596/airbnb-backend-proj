@@ -1396,7 +1396,7 @@ Delete an existing image for a Spot.
 - Request
 
   - Method: DELETE
-  - URL: /spots/:SpotId/images/:imageId
+  - URL: /spots/:spotId/images/:imageId
   - Body: none
 
 - Successful Response
