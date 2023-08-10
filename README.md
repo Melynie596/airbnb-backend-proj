@@ -306,7 +306,7 @@ Returns all the spots owned (created) by the current user.
 - Request
 
   - Method: GET
-  - URL: /users/current/spots
+  - URL: /spots/current
   - Body: none
 
 - Successful Response
@@ -671,7 +671,7 @@ Returns all the reviews written by the current user.
 - Request
 
   - Method: GET
-  - URL: /users/current/reviews
+  - URL: /reviews/current
   - Body: none
 
 - Successful Response
@@ -1040,7 +1040,7 @@ Return all the bookings that the current user has made.
 - Request
 
   - Method: GET
-  - URL: /users/current/bookings
+  - URL: /bookings/current
   - Body: none
 
 - Successful Response
