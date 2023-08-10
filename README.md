@@ -2,9 +2,9 @@
 
 ## Database Schema Design
 
-![Screenshot 2023-06-07 202003](https://github.com/Melynie596/airbnb-backend-proj/assets/110128527/d2227798-9639-4418-b082-0ec13d89237d)
+![Screenshot 2023-08-08 202937](https://github.com/Melynie596/airbnb-backend-proj/assets/110128527/579d472e-2fd5-4364-9fa1-56ded33313f8)
 
-https://dbdiagram.io/d/6476a3007764f72fcf2325a3
+https://dbdiagram.io/d/64d3165102bd1c4a5e787947
 
 ## API Documentation
 
