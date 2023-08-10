@@ -30,9 +30,7 @@ module.exports = {
       lng: -378.00,
       name: 'Cabin in the Woods',
       description: 'cute cottage in the woods to experience the true alaskan experience!',
-      price: 150,
-      previewImage: 'cabinpicture',
-      avgRating: 5
+      price: 150
     },
     { id: 2,
       ownerId: 2,
@@ -44,9 +42,7 @@ module.exports = {
       lng: -95.94109,
       name: 'Afforadable Dundee Bedroom',
       description: 'cozy 1 bedroom with peacful ambiance and affordability',
-      price: 70,
-      previewImage: 'imageinnebraska',
-      avgRating: 4
+      price: 70
     }
    ], {})
   },

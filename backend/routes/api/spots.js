@@ -116,23 +116,10 @@ router.get(
         }
 
         const spots = await Spot.findAll({
-            attributes: [
-                "id",
-                "ownerId",
-                "address",
-                "city",
-                "state",
-                "country",
-                "lat",
-                "lng",
-                "name",
-                "description",
-                "price",
-                "createdAt",
-                "updatedAt",
-                "avgRating"
-
-            ],
+            attributes: ["id", "ownerId", "address", "city", "state", "country", "lat", "lng", "name", "description", "price", "createdAt", "updatedAt",
+            [sequelize.fn("ROUND", sequelize.fn("AVG", sequelize.col("stars")), 1),
+                "avgRating",],
+        ],
             ...pagination
         });
 

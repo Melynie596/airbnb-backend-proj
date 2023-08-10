@@ -60,17 +60,6 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.FLOAT,
       allowNull: false
     },
-    previewImage: {
-      type: DataTypes.STRING,
-      references: {
-        model: "SpotImage",
-        key: 'preview'
-      }
-    },
-    avgRating: {
-      type: DataTypes.FLOAT,
-
-    },
     createdAt: DataTypes.DATE,
     updatedAt: DataTypes.DATE
   }, {
