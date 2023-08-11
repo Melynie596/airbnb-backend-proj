@@ -20,7 +20,7 @@ module.exports = (sequelize, DataTypes) => {
           {foreignKey: 'ownerId', as: 'Owner'}
         );
       Spot.hasMany(models.SpotImage,
-        {foreignKey: 'spotId', onDelete: 'CASCADE', hooks: true});
+        {foreignKey: 'spotId', onDelete: 'CASCADE', hooks: true} );
     }
   }
   Spot.init({

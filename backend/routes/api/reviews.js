@@ -2,7 +2,7 @@ const express = require('express');
 const bcrypt = require('bcryptjs');
 
 const { setTokenCookie, requireAuth } = require('../../utils/auth');
-const { User, Review, Spot, ReviewImage } = require('../../db/models');
+const { User, Review, Spot, ReviewImage, sequelize } = require('../../db/models');
 
 const router = express.Router();
 
@@ -40,106 +40,28 @@ router.get(
             where: {userId: userId},
             include: [
                 {
+                    model: User,
+                    attributes: ['id', 'firstName', 'lastName']
+                },
+                {
                     model: Spot,
-                    attributes: ['id', 'ownerId', 'address', 'city', 'state', 'country', 'lat', 'lng', 'name', 'price', 'previewImage' ]
+                    attributes: ['id', 'ownerId', 'address', 'city', 'state', 'country', 'lat', 'lng', 'name', 'price']
                 },
                 {
                     model: ReviewImage,
                     attributes: ['id', 'url']
-                },
-                {
-                    model: User,
-                    attributes: ['id', 'firstName', 'lastName']
                 }
             ],
             group: ['Spot.id', 'Review.id', 'User.id', 'ReviewImages.id']
 
         });
 
-        return res.status(200).json(review);
+        return res.status(200).json({Reviews: review});
 
 
     }
 );
 
-// error responses, errors codes, match api docs, edit a spot create, signup (first last name), error bodys to match the docs,
-
-// get all reviews by a spot id
-
-// moved based on new API docs (january cohort) to spots router
-// router.get(
-//     '/:spotId',
-//     async(req, res, next) => {
-//         const spotId = req.params.spotId;
-
-//         const reviews = await Review.findAll({
-//             where: { spotId: spotId},
-//             include: [
-//                 {
-//                     model: User,
-//                     attributes: ['id', 'firstName', 'lastName']
-//                 },
-//                 {
-//                     model: ReviewImage,
-//                     attributes: ['id', 'url']
-//                 }
-//             ]
-//         });
-
-//         if(reviews.length === 0) {
-//             return res.status(404).json({
-//                 message: "Spot couldn't be found"
-//             })
-//         }
-
-//         return res.status(200).json({Reviews: reviews})
-//     }
-// )
-
-
-// //create a review for a spot based on the spots id
-
-// router.post(
-//     '/:spotId',
-//     requireAuth,
-//     validateReview,
-//     async (req, res, next) => {
-//         const spotId = req.params.spotId;
-//         const userId = req.user.id;
-//         const { review, stars } = req.body;
-
-//         const spot = await Spot.findOne({where: {id: spotId}});
-
-//         if (!spot) {
-//             return res.status(404).json({
-//                 message: "Spot couldn't be found"
-//             })
-//         }
-
-//         const existingReview = await Review.findOne({where: {
-//             userId: userId,
-//             spotId: spotId
-//         }});
-
-//         if (existingReview) {
-//           return res.status(500).json({
-//             message: "User already has a review for this spot"
-//           })
-//         }
-
-//             const newReview = await Review.create({
-//                 userId: userId,
-//                 spotId: Number(spotId),
-//                 review,
-//                 stars
-//             });
-
-//             return res.status(201).json(newReview);
-
-
-
-//     }
-// );
 
 // add an image to a review based on the review's id
 
@@ -163,9 +85,37 @@ router.post(
         if (userId === review.userId) {
 
 
-            const reviewImages = await ReviewImage.findAll({where : {reviewId: reviewId}});
+            // const numImages = await Review.count({
+            //     where: {id: reviewId},
+            //     include: {
+            //         model: ReviewImage,
+            //         attributes: ['url']
+            //     }
+            // });
+            // console.log(numImages);
+            //---------- getting a result of 1 each time-------------------
 
-            if(reviewImages.length > 10) {
+            // const numImages = await ReviewImage.count({
+            //     where : {reviewId: reviewId}
+            // });
+            // console.log(numImages);
+            // ------ getting a result of 0 each time----------------
+
+            // const reviewImages = await ReviewImage.findAll({
+            //     where: {reviewId: reviewId}
+            // });
+
+            // let count = 0;
+            // for (let image of reviewImages){
+            //     count++;
+            // }
+
+            // console.log(reviewImages);
+            // //------ showing up as empty array-----------
+            // console.log(count);
+            // //------ count is 0------------------------
+
+            if(numImages > 10) {
                 return res.status(403).json({
                     message: "Maximum number of images for this resource was reached"
                 })
