@@ -417,50 +417,43 @@ router.get(
         const spotId = req.params.spotId;
         const userId = req.user.id;
 
+        const spot = await Spot.findOne({
+            where: {id: spotId}
+        });
 
-        // if user is NOT the owner of the spot
+        if (!spot) {
+            return res.status(404).json({message: "Spot couldn't be found"});
+        }
+
+        if (spot.ownerId === userId){
+                       // if user IS the owner of the spot
+                       const ownerBooking = await Booking.findAll({
+                        where: {spotId: spotId},
+                        include: [
+                        {   model: User,
+                            attributes: [
+                                'id',
+                                'firstName',
+                                'lastname'
+                            ]
+                        },
+                    ]
+                });
+
+                return res.status(200).json({Bookings: ownerBooking});
+        } else {
+            //if user is NOT the owner of the spot
 
         const nonOwnerBooking = await Booking.findAll({
-                where: {spotId: spotId},
-                attributes: [
-                    'spotId',
-                    'startDate',
-                    'enddate'
-                ]
-            });
-
-
-
-            // if user IS the owner of the spot
-            const ownerBooking = await Booking.findAll({
-                where: {spotId: spotId},
-                include: [
-                    { model: 'User',
-                    attributes: [
-                        'id',
-                        'firstName',
-                        'lastname'
-                    ]
-                },
+            where: {spotId: spotId},
+            attributes: [
+                'spotId',
+                'startDate',
+                'endDate'
             ]
         });
 
-        if (nonOwnerBooking.length === 0 || ownerBooking.length === 0) {
-           return res.status(404).json({
-            message: "Spot couldn't be found"
-           })
-        }
-
-        for (let bookings of nonOwnerBooking) {
-            if (userId !== bookings.userId){
-                return res.status(200).json({Bookings: nonOwnerBooking});
-            }
-        }
-
-        for (let bookings of ownerBooking) {
-            if (userId === bookings.userId) {
-                return res.status(200).json({Bookings: booking});
-            }
+        return res.status(200).json({Bookings: nonOwnerBooking});
         }
 
     }
@@ -479,33 +472,21 @@ router.post(
 
         const spot = await Spot.findOne({where: {id: spotId}});
 
-        const newBooking = await Booking.create({
-            userId: userId,
-            spotId: Number(spotId),
-            startDate,
-            endDate
-        });
-
-        if (newBooking.startDate >= newBooking.endDate) {
-            return res.status(400).json({
-                message: "Bad Request",
-                errors: {
-                    endDate: "endDate cannot be on or before startDate"
-                }
-            })
-        }
-
         if (!spot) {
             return res.status(404).json({message: "Spot couldn't be found"});
         }
 
-        const allBookings = await Booking.findAll();
+
+        const allBookings = await Booking.findAll({
+            where: {spotId: spotId}
+        });
+
 
         for (let booking of allBookings){
             const existingStartDate = booking.startDate;
             const existingEndDate = booking.endDate;
 
-            if (existingStartDate === startDate || existingEndDate === endDate ){
+            if (existingStartDate === startDate || startDate <= existingEndDate ){
                 return res.status(403).json({
                     message: "Sorry, this spot is already booked for the specified dates",
                     errors: {
@@ -516,9 +497,25 @@ router.post(
             }
         }
 
+        const newBooking = await Booking.create({
+            userId: userId,
+            spotId: Number(spotId),
+            startDate,
+            endDate
+        });
 
 
-        if (spot.ownerId === userId){
+        if (newBooking.startDate >= newBooking.endDate) {
+            return res.status(400).json({
+                message: "Bad Request",
+                errors: {
+                    endDate: "endDate cannot be on or before startDate"
+                }
+            })
+        }
+
+
+        if (spot.ownerId !== userId){
             await newBooking.save();
             return res.status(200).json(newBooking);
         } else {

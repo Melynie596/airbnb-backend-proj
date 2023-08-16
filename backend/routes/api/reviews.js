@@ -73,7 +73,15 @@ router.post(
         const userId = req.user.id;
         const reviewId = req.params.reviewId;
 
-        const review = await Review.findOne({ where: { id: reviewId}});
+        const review = await Review.findOne({
+            where: { id: reviewId},
+            include: {
+                model: ReviewImage,
+                attributes: ['url']
+            }
+        });
+
+        console.log(review);
 
         if(!review) {
             return res.status(404).json({
@@ -84,36 +92,9 @@ router.post(
 
         if (userId === review.userId) {
 
-
-            // const numImages = await Review.count({
-            //     where: {id: reviewId},
-            //     include: {
-            //         model: ReviewImage,
-            //         attributes: ['url']
-            //     }
-            // });
-            // console.log(numImages);
-            //---------- getting a result of 1 each time-------------------
-
-            // const numImages = await ReviewImage.count({
-            //     where : {reviewId: reviewId}
-            // });
-            // console.log(numImages);
-            // ------ getting a result of 0 each time----------------
-
-            // const reviewImages = await ReviewImage.findAll({
-            //     where: {reviewId: reviewId}
-            // });
-
-            // let count = 0;
-            // for (let image of reviewImages){
-            //     count++;
-            // }
-
-            // console.log(reviewImages);
-            // //------ showing up as empty array-----------
-            // console.log(count);
-            // //------ count is 0------------------------
+            const numImages = await ReviewImage.count({
+                where : {reviewId: reviewId}
+            });
 
             if(numImages > 10) {
                 return res.status(403).json({
@@ -121,14 +102,15 @@ router.post(
                 })
             } else {
 
-                const addImage = await ReviewImage.create({ url });
+                const addImage = await ReviewImage.create({
+                    url,
+                    reviewId: reviewId
+                 });
                 const response = {
                     id: addImage.id,
                     url: addImage.url
                 }
                 await addImage.save();
-
-                // console.log(reviewImages);
 
                 return res.status(200).json(response);
             }

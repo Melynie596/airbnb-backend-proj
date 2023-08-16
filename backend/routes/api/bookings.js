@@ -35,8 +35,7 @@ router.get(
                         'lat',
                         'lng',
                         'name',
-                        'price',
-                        'previewImage'
+                        'price'
                     ]
                 }
             ]
@@ -71,8 +70,7 @@ router.get(
            return res.status(404).json({message: "Booking couldn't be found"});
         }
 
-        console.log(startDate, '------', booking.startDate);
-        if (booking.startDate < startDate){
+        if (startDate < booking.startDate){
            return res.status(403).json({message: "Past bookings can't be modified"});
         }
 
@@ -85,21 +83,14 @@ router.get(
             });
         }
 
-        const allBookings = await Booking.findAll();
-
-        for (let booking of allBookings){
-            const existingStartDate = booking.startDate;
-            const existingEndDate = booking.endDate;
-
-            if (startDate === existingStartDate || endDate === existingEndDate ){
-                return res.status(403).json({
-                    message: "Sorry, this spot is already booked for the specified dates",
-                    errors: {
-                        startDate: "Start date conflicts with an existing booking",
-                        endDate: "End date conflicts with an existing booking"
-                    }
-                })
-            }
+        if (booking.startDate === startDate || startDate <= booking.endDate ){
+            return res.status(403).json({
+                message: "Sorry, this spot is already booked for the specified dates",
+                errors: {
+                    startDate: "Start date conflicts with an existing booking",
+                    endDate: "End date conflicts with an existing booking"
+                }
+            })
         }
 
         if (userId === booking.userId) {
