@@ -548,9 +548,9 @@ router.post(
                         }
             }
 
-            if (bookingStartDate <= existingEndDate && bookingStartDate >= existingStartDate ) return res.status(403).json({err});
-            if (bookingEndDate <= existingEndDate && bookingEndDate >= existingStartDate) return res.status(403).json({err});
-            if (bookingEndDate >= existingEndDate && bookingStartDate <= existingStartDate) return res.status(403).json({err});
+            if (bookingStartDate <= existingEndDate && bookingStartDate >= existingStartDate ) return res.status(403).json(err);
+            if (bookingEndDate <= existingEndDate && bookingEndDate >= existingStartDate) return res.status(403).json(err);
+            if (bookingEndDate >= existingEndDate && bookingStartDate <= existingStartDate) return res.status(403).json(err);
 
         }
 
