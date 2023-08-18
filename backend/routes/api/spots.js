@@ -160,7 +160,7 @@ router.get(
                     }
                 ],
                 attributes: ["id", "ownerId", "address", "city", "state", "country", "lat", "lng", "name", "description", "price", "createdAt", "updatedAt",
-                            Number([sequelize.fn("ROUND", sequelize.fn("AVG", sequelize.col("stars")), 1), "avgRating"]) ],
+                            [sequelize.fn("ROUND", sequelize.fn("AVG", sequelize.col("stars")), 1), "avgRating"] ],
                 group: ["Spot.id"]
             });
 
