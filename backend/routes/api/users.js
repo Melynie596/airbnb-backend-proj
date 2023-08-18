@@ -12,22 +12,31 @@ const { handleValidationErrors } = require('../../utils/validation');
 const validateSignup = [
   check('email')
     .exists({ checkFalsy: true })
+    .withMessage('Invalid email')
+    .notEmpty()
+    .withMessage('Invalid email')
     .isEmail()
     .withMessage('Invalid email'),
-  check('username')
-    .trim()
+    check('username')
     .exists({ checkFalsy: true })
+    .withMessage('Username is required')
+    .trim()
     .notEmpty()
+    .withMessage('Username is required')
     .isLength({ min: 4 })
     .withMessage('Username is required'),
   check('firstName')
+    .exists({ checkFalsy: true })
+    .withMessage('First Name is required')
     .trim()
     .notEmpty()
+    .withMessage('First Name is required')
     .isString()
     .withMessage('First Name is required'),
   check('lastName')
-    .trim()
     .exists({ checkFalsy: true })
+    .withMessage('Last Name is required')
+    .trim()
     .notEmpty()
     .withMessage('Last Name is required'),
   handleValidationErrors
@@ -78,9 +87,10 @@ router.post(
   }
 );
 
-// Restore session user
+// Get the current User
 router.get(
   '/current',
+  requireAuth,
   (req, res) => {
     const { user } = req;
     if (user) {

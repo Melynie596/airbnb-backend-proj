@@ -24,7 +24,7 @@ module.exports = {
       id: 1,
       url: 'jsdgkjahdj',
       spotId: 1,
-      preview: false
+      preview: true
     },
     {
       id: 2,

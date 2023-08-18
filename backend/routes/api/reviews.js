@@ -2,13 +2,14 @@ const express = require('express');
 const bcrypt = require('bcryptjs');
 
 const { setTokenCookie, requireAuth } = require('../../utils/auth');
-const { User, Review, Spot, ReviewImage, sequelize } = require('../../db/models');
+const { User, Review, Spot, ReviewImage, sequelize, SpotImage } = require('../../db/models');
 
 const router = express.Router();
 
 
 const { check } = require('express-validator');
 const { handleValidationErrors } = require('../../utils/validation');
+const spotimage = require('../../db/models/spotimage');
 
 const validateReview = [
     check('review')
@@ -36,7 +37,7 @@ router.get(
     async (req, res) => {
         const userId = req.user.id;
 
-        const review = await Review.findAll({
+        const reviews = await Review.findAll({
             where: {userId: userId},
             include: [
                 {
@@ -56,7 +57,19 @@ router.get(
 
         });
 
-        return res.status(200).json({Reviews: review});
+        for (let review of reviews) {
+            const spot = review.Spot;
+            const previewImage = await SpotImage.findOne({
+                attributes: ["url"],
+                where: {spotId: spot.id, preview: true}
+            });
+
+            if (previewImage) {
+                spot.dataValues.previewImage = previewImage.url;
+            }
+        }
+
+        return res.status(200).json({Reviews: reviews});
 
 
     }
@@ -81,7 +94,6 @@ router.post(
             }
         });
 
-        console.log(review);
 
         if(!review) {
             return res.status(404).json({

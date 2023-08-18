@@ -42,8 +42,14 @@ router.get(
         });
 
         for (let booking of bookings) {
-            if (userId !== booking.userId) {
-                return res.status(403).json({message: "Forbidden!"})
+            const spot = booking.Spot;
+            const previewImage = await SpotImage.findOne({
+                attributes: ["url"],
+                where: {spotId: spot.id, preview: true}
+            });
+
+            if (previewImage) {
+                spot.dataValues.previewImage = previewImage.url;
             }
 
         }
@@ -128,7 +134,7 @@ router.delete(
 
         const currentDate = new Date();
 
-        if(booking.startDate < currentDate && currentDate < booking.endDate) {
+        if(booking.startDate <= currentDate && currentDate <= booking.endDate) {
             return res.status(403).json({
                 message: "Bookings that have been started can't be deleted"
             })
@@ -137,7 +143,7 @@ router.delete(
         if (userId === booking.userId){
             await booking.destroy();
 
-            return res.status(200).json({message: "successfully deleted"});
+            return res.status(200).json({message: "Successfully deleted"});
 
         } else {
             return res.status(403).json({
