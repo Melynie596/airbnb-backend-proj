@@ -2,7 +2,7 @@ const express = require('express');
 const bcrypt = require('bcryptjs');
 
 const { setTokenCookie, requireAuth } = require('../../utils/auth');
-const { Booking, Spot } = require('../../db/models');
+const { Booking, Spot, SpotImage } = require('../../db/models');
 const sequelize = require('sequelize');
 
 const router = express.Router();

@@ -160,7 +160,7 @@ router.get(
                     }
                 ],
                 attributes: ["id", "ownerId", "address", "city", "state", "country", "lat", "lng", "name", "description", "price", "createdAt", "updatedAt",
-                            [sequelize.fn("ROUND", sequelize.fn("AVG", sequelize.col("stars")), 1), "avgRating"] ],
+                            Number([sequelize.fn("ROUND", sequelize.fn("AVG", sequelize.col("stars")), 1), "avgRating"]) ],
                 group: ["Spot.id"]
             });
 
@@ -202,7 +202,7 @@ router.get(
             ],
             attributes: [
                 "id", "ownerId", "address", "city", "state", "country", "lat", "lng", "name", "description", "price", "createdAt", "updatedAt",
-                [sequelize.fn("ROUND", sequelize.fn("AVG", sequelize.col("stars")), 1), "avgRating"],
+                Number([sequelize.fn("ROUND", sequelize.fn("AVG", sequelize.col("stars")), 1), "avgRating"]),
                 [sequelize.col("SpotImages.url"), "previewImage"]
             ],
             group:  ["Spot.id", "SpotImages.url"]
@@ -243,8 +243,8 @@ router.get(
             },
         ],
         attributes: ["id", "ownerId", "address", "city", "state", "country", "lat", "lng", "name", "description", "price", "createdAt", "updatedAt",
-            [sequelize.fn("COUNT", sequelize.col("Reviews.id")), "numReviews"],
-            [sequelize.fn("ROUND", sequelize.fn("AVG", sequelize.col("stars")), 1), "avgRating"],
+            Number([sequelize.fn("COUNT", sequelize.col("Reviews.id")), "numReviews"]),
+            Number([sequelize.fn("ROUND", sequelize.fn("AVG", sequelize.col("stars")), 1), "avgRating"]),
         ],
         group: ["SpotImages.id", "Spot.id", "Owner.id"]
     });
@@ -483,7 +483,7 @@ router.get(
                             attributes: [
                                 'id',
                                 'firstName',
-                                'lastname'
+                                'lastName'
                             ]
                         },
                     ]
@@ -535,26 +535,21 @@ router.post(
             const existingStartDate = booking.startDate;
             const existingEndDate = booking.endDate;
 
-            if (existingStartDate === startDate || startDate <= existingEndDate ){
-                return res.status(403).json({
-                    message: "Sorry, this spot is already booked for the specified dates",
-                    errors: {
+            const err = {
+                message: "Sorry, this spot is already booked for the specified dates",
+                errors: {
                         startDate: "Start date conflicts with an existing booking",
                         endDate: "End date conflicts with an existing booking"
-                    }
-                })
+                        }
             }
+
+            if (startDate <= existingEndDate && startDate >= existingStartDate ) return res.status(403).json({err});
+            if (endDate <= existingEndDate && endDate >= existingStartDate) return res.status(403).json({err});
+            if (endDate >= existingEndDate && startDate <= existingStartDate) return res.status(403).json({err});
+
         }
 
-        const newBooking = await Booking.create({
-            userId: userId,
-            spotId: Number(spotId),
-            startDate,
-            endDate
-        });
-
-
-        if (newBooking.startDate >= newBooking.endDate) {
+        if (startDate >= endDate) {
             return res.status(400).json({
                 message: "Bad Request",
                 errors: {
@@ -563,6 +558,12 @@ router.post(
             })
         }
 
+        const newBooking = await Booking.create({
+            userId: userId,
+            spotId: Number(spotId),
+            startDate,
+            endDate
+        });
 
         if (spot.ownerId !== userId){
             await newBooking.save();
