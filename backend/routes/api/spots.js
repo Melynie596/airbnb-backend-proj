@@ -205,7 +205,7 @@ router.get(
                 [sequelize.fn("ROUND", sequelize.fn("AVG", sequelize.col("stars")), 1), "avgRating"],
                 [sequelize.col("SpotImages.url"), "previewImage"]
             ],
-            group:  ["Spot.id"]
+            group:  ["Spot.id", "SpotImages.url"]
         });
 
 
