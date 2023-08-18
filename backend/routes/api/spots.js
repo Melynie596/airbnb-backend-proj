@@ -202,7 +202,7 @@ router.get(
             ],
             attributes: [
                 "id", "ownerId", "address", "city", "state", "country", "lat", "lng", "name", "description", "price", "createdAt", "updatedAt",
-                Number([sequelize.fn("ROUND", sequelize.fn("AVG", sequelize.col("stars")), 1), "avgRating"]),
+                [sequelize.fn("ROUND", sequelize.fn("AVG", sequelize.col("stars")), 1), "avgRating"],
                 [sequelize.col("SpotImages.url"), "previewImage"]
             ],
             group:  ["Spot.id", "SpotImages.url"]
@@ -243,8 +243,8 @@ router.get(
             },
         ],
         attributes: ["id", "ownerId", "address", "city", "state", "country", "lat", "lng", "name", "description", "price", "createdAt", "updatedAt",
-            Number([sequelize.fn("COUNT", sequelize.col("Reviews.id")), "numReviews"]),
-            Number([sequelize.fn("ROUND", sequelize.fn("AVG", sequelize.col("stars")), 1), "avgRating"]),
+            [sequelize.fn("COUNT", sequelize.col("Reviews.id")), "numReviews"],
+            [sequelize.fn("ROUND", sequelize.fn("AVG", sequelize.col("stars")), 1), "avgRating"],
         ],
         group: ["SpotImages.id", "Spot.id", "Owner.id"]
     });
