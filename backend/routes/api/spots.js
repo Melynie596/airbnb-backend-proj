@@ -416,9 +416,10 @@ router.post(
     requireAuth,
     validateReview,
     async (req, res, next) => {
-        const spotId = req.params.spotId;
+        let spotId = req.params.spotId;
         const userId = req.user.id;
         const { review, stars } = req.body;
+        spotId = Number(spotId);
 
         const spot = await Spot.findOne({where: {id: spotId}});
 
@@ -441,7 +442,7 @@ router.post(
 
             const newReview = await Review.create({
                 userId: userId,
-                spotId: Number(spotId),
+                spotId,
                 review,
                 stars
             });
