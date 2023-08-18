@@ -518,6 +518,8 @@ router.post(
         const { startDate, endDate } = req.body;
         const spotId = req.params.spotId;
         const userId = req.user.id;
+        const bookingStartDate = new Date(startDate);
+        const bookingEndDate = new Date(endDate);
 
         const spot = await Spot.findOne({where: {id: spotId}});
 
@@ -543,13 +545,13 @@ router.post(
                         }
             }
 
-            if (startDate <= existingEndDate && startDate >= existingStartDate ) return res.status(403).json({err});
-            if (endDate <= existingEndDate && endDate >= existingStartDate) return res.status(403).json({err});
-            if (endDate >= existingEndDate && startDate <= existingStartDate) return res.status(403).json({err});
+            if (bookingStartDate <= existingEndDate && bookingStartDate >= existingStartDate ) return res.status(403).json({err});
+            if (bookingEndDate <= existingEndDate && bookingEndDate >= existingStartDate) return res.status(403).json({err});
+            if (bookingEndDate >= existingEndDate && bookingStartDate <= existingStartDate) return res.status(403).json({err});
 
         }
 
-        if (startDate >= endDate) {
+        if (bookingStartDate >= bookingEndDate) {
             return res.status(400).json({
                 message: "Bad Request",
                 errors: {
@@ -561,8 +563,8 @@ router.post(
         const newBooking = await Booking.create({
             userId: userId,
             spotId: Number(spotId),
-            startDate: new Date(startDate),
-            endDate: new Date(endDate)
+            startDate: bookingStartDate,
+            endDate: bookingEndDate
         });
 
         if (spot.ownerId !== userId){
