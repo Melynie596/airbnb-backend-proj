@@ -533,9 +533,11 @@ router.post(
         });
 
 
+
         for (let booking of allBookings){
-            const existingStartDate = booking.startDate;
-            const existingEndDate = booking.endDate;
+            const existingStartDate = new Date(booking.startDate);
+            const existingEndDate = new Date(booking.endDate);
+
 
             const err = {
                 message: "Sorry, this spot is already booked for the specified dates",
