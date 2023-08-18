@@ -13,6 +13,7 @@ const validateSignup = [
   check('email')
     .exists({ checkFalsy: true })
     .withMessage('Invalid email')
+    .trim()
     .notEmpty()
     .withMessage('Invalid email')
     .isEmail()
