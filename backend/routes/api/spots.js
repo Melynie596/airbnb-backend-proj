@@ -561,8 +561,8 @@ router.post(
         const newBooking = await Booking.create({
             userId: userId,
             spotId: Number(spotId),
-            startDate,
-            endDate
+            startDate: new Date(startDate),
+            endDate: new Date(endDate)
         });
 
         if (spot.ownerId !== userId){
