@@ -78,13 +78,7 @@ router.get(
     }
 );
 
-const d = new Date();
-let day = d.getDate();
-if (day < 10) day = `0${day}`;
-let month = d.getMonth();
-if (month < 10) month = `0${month}`;
-let year = d.getFullYear();
-let curr = `${year}-${month}-${day}`;
+
 
     // edit a booking
 
@@ -154,35 +148,43 @@ router.delete(
     '/:bookingId',
     requireAuth,
     async (req, res, next) => {
-        const { bookingId } = req.params;
-        const { user } = req;
-        const booking = await Booking.findByPk(bookingId);
+        const userId = req.user.id;
+        const bookingId = req.params.bookingId;
 
-        // booking couldnt be found
+        const booking = await Booking.findOne({where: {id: bookingId}});
+        const bookingStartDate = booking.startDate;
+        const bookingEndDate = booking.endDate;
+
         if (!booking) {
-            res.statusCode = 404;
-            return res.json({ message: "Booking couldn't be found" })
+            return res.status(404).json({message: "Booking couldn't be found"});
         }
 
-        const spot = await Spot.findByPk(booking.spotId);
+        let dateObj = new Date();
+        let month = dateObj.getUTCMonth() + 1;
+        let day = dateObj.getDate();
+        let year = dateObj.getUTCFullYear();
 
-        let spotOwner, bookOwner;
-        if (spot.ownerId == user.id) spotOwner = true;
-        else if (booking.userId == user.id) bookOwner = true;
+        const currentDate = year + "-" + month + "-" + day;
 
-        if (!bookOwner && !spotOwner) {
-            res.statusCode = 401;
-            return res.json({ message: "forbidden" });
+        console.log(currentDate);
+        console.log(currentDate >= bookingStartDate);
+        console.log(currentDate >= bookingEndDate);
+        console.log(bookingStartDate, '---', bookingEndDate);
+
+        if (currentDate >= bookingStartDate && currentDate <= bookingEndDate) {
+            return res.status(403).json({message: "Bookings that have been started can't be deleted"})
         }
 
-        // bookings that have been started cant be deleted
-        if (booking.startDate <= curr) {
-            res.statusCode = 403;
-            return res.json({ message: "Bookings that have been started can't be deleted" })
-        }
+        if (userId === booking.userId){
+            await booking.destroy();
 
-        await booking.destroy();
-        return res.json({ "message": "Successfully deleted" })
+            return res.status(200).json({message: "Successfully deleted"});
+
+        } else {
+            return res.status(403).json({
+                message: "Forbidden"
+            })
+        }
     }
 );
 
