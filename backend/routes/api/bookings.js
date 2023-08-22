@@ -11,6 +11,26 @@ const { check } = require('express-validator');
 const { handleValidationErrors } = require('../../utils/validation');
 const booking = require('../../db/models/booking');
 
+const validateBooking = [
+    check('startDate')
+    .exists({ checkFalsy: true })
+    .withMessage("Must include a start date")
+    .trim()
+    .notEmpty()
+    .withMessage("Must include a start date")
+    .isDate("yyyy-mm-dd")
+    .withMessage("Must enter a valid date"),
+    check('endDate')
+    .exists({ checkFalsy: true })
+    .withMessage("Must include an end date")
+    .trim()
+    .notEmpty()
+    .withMessage("Must include an end date")
+    .isDate("yyyy-mm-dd")
+    .withMessage("Must enter a valid date"),
+    handleValidationErrors
+]
+
 
 //get all the booking that the current user has made
 
@@ -64,6 +84,7 @@ router.get(
 
     router.put(
         '/:bookingId',
+        validateBooking,
     requireAuth,
     async (req, res, next) => {
         const userId = req.user.id;
@@ -127,43 +148,35 @@ router.delete(
     '/:bookingId',
     requireAuth,
     async (req, res, next) => {
-        const userId = req.user.id;
-        const bookingId = req.params.bookingId;
+        const { bookingId } = req.params;
+        const { user } = req;
+        const booking = await Booking.findByPk(bookingId);
 
-        const booking = await Booking.findOne({where: {id: bookingId}});
-        const bookingStartDate = booking.startDate;
-        const bookingEndDate = booking.endDate;
-
+        // booking couldnt be found
         if (!booking) {
-            return res.status(404).json({message: "Booking couldn't be found"});
+            res.statusCode = 404;
+            return res.json({ message: "Booking couldn't be found" })
         }
 
-        let dateObj = new Date();
-        let month = dateObj.getUTCMonth() + 1;
-        let day = dateObj.getDate();
-        let year = dateObj.getUTCFullYear();
+        const spot = await Spot.findByPk(booking.spotId);
 
-        const currentDate = year + "-" + month + "-" + day;
+        let spotOwner, bookOwner;
+        if (spot.ownerId == user.id) spotOwner = true;
+        else if (booking.userId == user.id) bookOwner = true;
 
-        console.log(currentDate);
-        console.log(currentDate >= bookingStartDate);
-        console.log(currentDate >= bookingEndDate);
-        console.log(bookingStartDate, '---', bookingEndDate);
-
-        if (currentDate >= bookingStartDate && currentDate <= bookingEndDate) {
-            return res.status(403).json({message: "Bookings that have been started can't be deleted"})
+        if (!bookOwner && !spotOwner) {
+            res.statusCode = 401;
+            return res.json({ message: "forbidden" });
         }
 
-        if (userId === booking.userId){
-            await booking.destroy();
-
-            return res.status(200).json({message: "Successfully deleted"});
-
-        } else {
-            return res.status(403).json({
-                message: "Forbidden"
-            })
+        // bookings that have been started cant be deleted
+        if (booking.startDate <= curr) {
+            res.statusCode = 403;
+            return res.json({ message: "Bookings that have been started can't be deleted" })
         }
+
+        await booking.destroy();
+        return res.json({ "message": "Successfully deleted" })
     }
 );
 

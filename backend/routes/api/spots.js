@@ -142,13 +142,17 @@ const validateBooking = [
     .withMessage("Must include a start date")
     .trim()
     .notEmpty()
-    .withMessage("Must include a start date"),
+    .withMessage("Must include a start date")
+    .isDate("yyyy-mm-dd")
+    .withMessage("Must enter a valid date"),
     check('endDate')
     .exists({ checkFalsy: true })
     .withMessage("Must include an end date")
     .trim()
     .notEmpty()
-    .withMessage("Must include an end date"),
+    .withMessage("Must include an end date")
+    .isDate("yyyy-mm-dd")
+    .withMessage("Must enter a valid date"),
     handleValidationErrors
 ];
 
@@ -464,38 +468,8 @@ router.post(
     async (req, res, next) => {
         let spotId = req.params.spotId;
         const userId = req.user.id;
-        // const { review, stars } = req.body;
+
         spotId = Number(spotId);
-
-        // const spot = await Spot.findOne({where: {id: spotId}});
-
-        // if (!spot) {
-        //     return res.status(404).json({
-        //         message: "Spot couldn't be found"
-        //     })
-        // }
-
-        // const existingReview = await Review.findOne({where: {
-        //     userId: userId,
-        //     spotId: spotId
-        // }});
-
-        // if (existingReview) {
-        //   return res.status(500).json({
-        //     message: "User already has a review for this spot"
-        //   })
-        // }
-
-        //     const newReview = await Review.create({
-        //         userId: userId,
-        //         spotId,
-        //         review,
-        //         stars
-        //     });
-
-        //     await newReview.save();
-
-        //     return res.status(201).json(newReview);
 
         let { review, stars} = req.body;
 
@@ -641,6 +615,7 @@ router.post(
                 }
             })
         }
+
 
         const newBooking = await Booking.create({
             userId: userId,
