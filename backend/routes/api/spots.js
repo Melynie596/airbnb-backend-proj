@@ -462,7 +462,7 @@ router.post(
     requireAuth,
     validateReview,
     async (req, res, next) => {
-        const spotId = req.params.spotId;
+        let spotId = req.params.spotId;
         const userId = req.user.id;
         // const { review, stars } = req.body;
         spotId = Number(spotId);
@@ -505,7 +505,7 @@ router.post(
             }
         });
 
-        const user = await User.findByPk(userId);
+        // const user = await User.findByPk(userId);
 
         if(!spot) return res.status(404).json({message: "Spot couldn't be found"});
 
