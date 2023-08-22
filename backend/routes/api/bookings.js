@@ -78,7 +78,13 @@ router.get(
     }
 );
 
-
+const d = new Date();
+let day = d.getDate();
+if (day < 10) day = `0${day}`;
+let month = d.getMonth();
+if (month < 10) month = `0${month}`;
+let year = d.getFullYear();
+let curr = `${year}-${month}-${day}`;
 
     // edit a booking
 
