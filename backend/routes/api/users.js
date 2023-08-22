@@ -91,9 +91,9 @@ router.post(
 // Get the current User
 router.get(
   '/current',
-  requireAuth,
   (req, res) => {
     const { user } = req;
+    if (!user) return res.status(401).json({user: null});
     if (user) {
       const safeUser = {
         id: user.id,
@@ -105,7 +105,7 @@ router.get(
       return res.json({
         user: safeUser
       });
-    } else return res.json({ user: null });
+    }
   }
 );
 

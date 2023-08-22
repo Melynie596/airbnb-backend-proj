@@ -38,8 +38,12 @@ router.get(
     async (req, res) => {
         const userId = req.user.id;
 
-        const reviews = await Review.findAll({
-            where: {userId: userId},
+        const userSpots = await Spot.findAll({
+            where: {ownerId: userId}
+        });
+
+        const userReviews = await Review.findAll({
+            where: { userId: userId},
             include: [
                 {
                     model: User,
@@ -47,32 +51,38 @@ router.get(
                 },
                 {
                     model: Spot,
-                    attributes: ['id', 'ownerId', 'address', 'city', 'state', 'country', 'lat', 'lng', 'name', 'price']
+                    attributes: { exclude: ['description', 'createdAt', 'updatedAt']}
                 },
                 {
                     model: ReviewImage,
                     attributes: ['id', 'url']
                 }
-            ],
-            group: ['Spot.id', 'Review.id', 'User.id', 'ReviewImages.id']
-
+            ]
         });
 
-        for (let review of reviews) {
-            const spot = review.Spot;
-            const previewImage = await SpotImage.findOne({
-                attributes: ["url"],
-                where: {spotId: spot.id, preview: true}
-            });
+        const results = [];
 
-            if (previewImage) {
-                spot.dataValues.previewImage = previewImage.url;
-            }
+        for (let i = 0; i < userReviews.length; i++) {
+            let review = userReviews[i];
+            review = review.toJSON();
+
+            // find preview image for spots
+            for (let spot of userSpots) {
+                spot = spot.toJSON();
+                const previewImage = await SpotImage.findAll({
+                    raw: true,
+                    where: { preview: true, spotId: spot.id},
+                    attributes: ['preview', 'url']
+                });
+
+                if(previewImage.length) review.Spot.previewImage = previewImage[0].url;
+                if (!previewImage.length) review.Spot.previewImage = null;
+            };
+
+            results.push(review);
         }
 
-        return res.status(200).json({Reviews: reviews});
-
-
+        return res.json({Reviews: results});
     }
 );
 
@@ -123,7 +133,7 @@ router.post(
                     id: addImage.id,
                     url: addImage.url
                 }
-                await addImage.save();
+                // await addImage.save();
 
                 return res.status(200).json(response);
             }

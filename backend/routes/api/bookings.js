@@ -76,7 +76,9 @@ router.get(
            return res.status(404).json({message: "Booking couldn't be found"});
         }
 
-        if (startDate < booking.startDate){
+        const currentDate = new Date();
+
+        if (startDate < currentDate){
            return res.status(403).json({message: "Past bookings can't be modified"});
         }
 
@@ -89,15 +91,17 @@ router.get(
             });
         }
 
-        if (booking.startDate === startDate || startDate <= booking.endDate ){
-            return res.status(403).json({
-                message: "Sorry, this spot is already booked for the specified dates",
-                errors: {
+        const err = {
+            message: "Sorry, this spot is already booked for the specified dates",
+            errors: {
                     startDate: "Start date conflicts with an existing booking",
                     endDate: "End date conflicts with an existing booking"
-                }
-            })
+                    }
         }
+
+        if (startDate <= booking.endDate && startDate >= booking.startDate ) return res.status(403).json(err);
+        if (endDate <= booking.endDate && endDate >= booking.startDate) return res.status(403).json(err);
+        if (endDate >= booking.endDate && startDate <= booking.startDate) return res.status(403).json(err);
 
         if (userId === booking.userId) {
            await booking.set({
@@ -127,17 +131,27 @@ router.delete(
         const bookingId = req.params.bookingId;
 
         const booking = await Booking.findOne({where: {id: bookingId}});
+        const bookingStartDate = booking.startDate;
+        const bookingEndDate = booking.endDate;
 
         if (!booking) {
             return res.status(404).json({message: "Booking couldn't be found"});
         }
 
-        const currentDate = new Date();
+        let dateObj = new Date();
+        let month = dateObj.getUTCMonth() + 1;
+        let day = dateObj.getDate();
+        let year = dateObj.getUTCFullYear();
 
-        if(booking.startDate <= currentDate && currentDate <= booking.endDate) {
-            return res.status(403).json({
-                message: "Bookings that have been started can't be deleted"
-            })
+        const currentDate = year + "-" + month + "-" + day;
+
+        console.log(currentDate);
+        console.log(currentDate >= bookingStartDate);
+        console.log(currentDate >= bookingEndDate);
+        console.log(bookingStartDate, '---', bookingEndDate);
+
+        if (currentDate >= bookingStartDate && currentDate <= bookingEndDate) {
+            return res.status(403).json({message: "Bookings that have been started can't be deleted"})
         }
 
         if (userId === booking.userId){
