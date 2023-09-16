@@ -11,8 +11,8 @@ const { handleValidationErrors } = require('../../utils/validation');
 
 const validateSignup = [
   check('email')
-    .exists({ checkFalsy: true })
-    .withMessage('Invalid email')
+  .exists({ checkFalsy: true })
+  .withMessage('Invalid email')
     .trim()
     .notEmpty()
     .withMessage('Invalid email')
@@ -34,7 +34,7 @@ const validateSignup = [
     .withMessage('First Name is required')
     .isString()
     .withMessage('First Name is required'),
-  check('lastName')
+    check('lastName')
     .exists({ checkFalsy: true })
     .withMessage('Last Name is required')
     .trim()
@@ -52,16 +52,17 @@ router.post(
 
     const existingUsers = await User.findAll();
 
+
     for (let users of existingUsers) {
       if (users.email === email){
-        return res.status(500).json({
+        return res.status(401).json({
           message: "User already exists",
           errors: {
             email: "User with that email already exists"
           }
         })
       } else if (users.username === username) {
-        return res.status(500).json({
+        return res.status(401).json({
           message: "User already exists",
           errors: {
             username: "User with that username already exists"
