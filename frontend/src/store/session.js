@@ -49,13 +49,18 @@ export const restoreUser = () => async (dispatch) => {
         password,
       }),
     });
-    console.log(response, "this is res");
+
     const data = await response.json();
-    console.log(data, 'this is parsed res');
     dispatch(setUser(data.user));
     return response;
   };
 
+export const logout = () => async (dispatch) => {
+  const res = await csrfFetch('/api/session', {
+    method: "DELETE",
+
+  })
+}
 const initialState = { user: null };
 
 const sessionReducer = (state = initialState, action) => {
