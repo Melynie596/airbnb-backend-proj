@@ -10,7 +10,10 @@ const getAllSpots = (spots) => {
 };
 
 export const getSpots = () => async(dispatch) => {
-    const res = await csrfFetch('/api/spots');
+    console.log('we are here');
+    const res = await csrfFetch('/api/spots', {
+        method: "GET"
+    });
     const parsedRes = await res.json();
 
     if (res.ok) {
@@ -26,7 +29,8 @@ const spotsReducer = (state = initialState, action) => {
     switch (action.type) {
         case GET_ALL_SPOTS:
             newState = Object.assign({}, state);
-            newState.spot = action.payload;
+            newState.spots = action.payload;
+             console.log(newState);
             return newState;
         default:
         return state;
