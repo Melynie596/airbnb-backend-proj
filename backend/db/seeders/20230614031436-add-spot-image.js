@@ -22,13 +22,13 @@ module.exports = {
    await queryInterface.bulkInsert(options, [
     {
       id: 1,
-      url: 'jsdgkjahdj',
+      url: 'https://media.vrbo.com/lodging/27000000/26940000/26932700/26932676/3ddcd5ab.c10.jpg',
       spotId: 1,
       preview: true
     },
     {
       id: 2,
-      url: 'jsdgkjahdj',
+      url: 'https://a0.muscache.com/im/pictures/0d2347bb-d67e-42a2-92af-c2d1a3364322.jpg',
       spotId: 2,
       preview: true
     }
