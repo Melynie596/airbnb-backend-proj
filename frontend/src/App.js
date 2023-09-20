@@ -5,6 +5,7 @@ import * as sessionActions from "./store/session";
 import Navigation from "./components/Navigation";
 import { Route } from "react-router-dom/cjs/react-router-dom.min";
 import SpotsLandingPage from "./components/SpotsLandingPage";
+import SpotDetailPage from "./components/SpotDetailPage";
 
 function App() {
   const dispatch = useDispatch();
@@ -17,8 +18,11 @@ function App() {
     <>
       <Navigation isLoaded={isLoaded} />
       {isLoaded && <Switch>
-        <Route path={'/'}>
+        <Route exact path={'/'}>
           <SpotsLandingPage />
+        </Route>
+        <Route path={'/spots/:spotId'}>
+            <SpotDetailPage />
         </Route>
         </Switch>}
     </>
