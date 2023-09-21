@@ -7,7 +7,6 @@ import './Navigation.css';
 function Navigation({ isLoaded }){
   const sessionUser = useSelector(state => state.session.user);
 
-
   return (
     <ul>
       <li>
@@ -18,6 +17,11 @@ function Navigation({ isLoaded }){
           <ProfileButton user={sessionUser} />
         </li>
       )}
+      {sessionUser ? (
+        <li>
+          <NavLink to='/api/spots/new'>Create a New Spot</NavLink>
+        </li>
+      ) : ''}
     </ul>
   );
 }
