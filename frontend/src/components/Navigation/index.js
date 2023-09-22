@@ -17,6 +17,11 @@ function Navigation({ isLoaded }){
           <ProfileButton user={sessionUser} />
         </li>
       )}
+      {sessionUser ? (
+        <li>
+          <NavLink to='/api/spots/new'>Create a New Spot</NavLink>
+        </li>
+      ) : ''}
     </ul>
   );
 }
