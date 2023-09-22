@@ -12,12 +12,14 @@ const CreateSpotForm = () => {
     const [description, setDescription] = useState('');
     const [name, setName] = useState('');
     const [price, setPrice] = useState(0);
+    const [url, setUrl] = useState([])
     const [errors, setErrors] = useState({});
 
     const handleSubmit = (e) => {
         e.preventDefault();
         setErrors({});
         return dispatch(spotActions.createASpot({ country, address, city, state, name, description, price}))
+        .then(dispatch(spotActions.addSpotImage(url)))
         .catch(async (res) => {
             const data = await res.json();
             if (data && data.errors) {
@@ -107,6 +109,47 @@ const CreateSpotForm = () => {
                     />
                 </label>
                 {errors.price && <p>{errors.price}</p>}
+                <h3>Liven up your spot with photos</h3>
+                <p>Submit a link to at least one photo to publish your spot</p>
+                <label>
+                    <input
+                    type='text'
+                    value={url[url.length - 1]}
+                    onChange={(e) => setUrl(url.push(e.target.value))}
+                    required
+                    />
+                </label>
+                {errors.url && <p>{errors.url}</p>}
+                <label>
+                    <input
+                    type='text'
+                    value={url[url.length - 1]}
+                    onChange={(e) => setUrl(url.push(e.target.value))}
+                    />
+                </label>
+                {errors.url && <p>{errors.url}</p>}
+                <label>
+                    <input
+                    type='text'
+                    onChange={(e) => setUrl(e.target.value)}
+                    />
+                </label>
+                {errors.url && <p>{errors.url}</p>}
+                <label>
+                    <input
+                    type='text'
+                    onChange={(e) => setUrl(e.target.value)}
+                    />
+                </label>
+                {errors.url && <p>{errors.url}</p>}
+                <label>
+                    <input
+                    type='text'
+                    onChange={(e) => setUrl(e.target.value)}
+                    />
+                </label>
+                {errors.url && <p>{errors.url}</p>}
+                <button type='submit'>Create Spot</button>
             </form>
 
         </div>
