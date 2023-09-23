@@ -26,6 +26,7 @@ export const login = (user) => async (dispatch) => {
     }),
   });
   const data = await response.json();
+  console.log(data);
   dispatch(setUser(data.user));
   return response;
 };
@@ -33,6 +34,7 @@ export const login = (user) => async (dispatch) => {
 export const restoreUser = () => async (dispatch) => {
     const response = await csrfFetch("/api/csrf/restore");
     const data = await response.json();
+    console.log(data);
     dispatch(setUser(data.user));
     return response;
   };
