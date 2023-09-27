@@ -103,12 +103,11 @@ const CreateSpotForm = () => {
         dispatch(spotActions.createASpot(values))
         .then(
             async (spot) => {
-                const addImage = await dispatch(spotActions.addSpotImage(spot?.payload?.id, {
+                const addImage = await dispatch(spotActions.addSpotImage(spot.id, {
                 images,
                 preview
             }));
 
-            console.log(addImage);
 
             if (addImage) {
                 history.push(`/api/spots/${spot.id}`)
