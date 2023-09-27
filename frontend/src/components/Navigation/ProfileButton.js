@@ -4,10 +4,13 @@ import * as sessionActions from '../../store/session';
 import OpenModalButton from '../OpenModalButton';
 import LoginFormModal from '../LoginFormModal';
 import SignupFormModal from '../SignupFormModal';
+import ManageSpots from "./ManageSpots";
 import "./ProfileButton.css"
+import { NavLink, useHistory } from "react-router-dom/cjs/react-router-dom.min";
 
 function ProfileButton({ user }) {
   const dispatch = useDispatch();
+  const history = useHistory();
   const [showMenu, setShowMenu] = useState(false);
   const ulRef = useRef();
 
@@ -38,6 +41,12 @@ function ProfileButton({ user }) {
     closeMenu();
   };
 
+  const manageSpots = (e) => {
+    e.preventDefault();
+    history.push("/api/spots/manage");
+    closeMenu();
+  }
+
   const ulClassName = "profile-dropdown" + (showMenu ? "" : " hidden");
 
   return (
@@ -50,6 +59,9 @@ function ProfileButton({ user }) {
           <>
             <li>{`Hello, ${user.firstName}`}</li>
             <li>{user.email}</li>
+            <li>
+              <button onClick={manageSpots}>Manage Spots</button>
+            </li>
             <li>
               <button onClick={logout}>Log Out</button>
             </li>
