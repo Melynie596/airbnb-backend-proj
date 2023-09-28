@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 
@@ -12,7 +12,6 @@ import OpenModalButton from "../OpenModalButton";
 const SpotDetailPage = () => {
     const { spotId } = useParams();
     const dispatch = useDispatch();
-    const [isLoaded, setIsLoaded] = useState(false);
     const spotDetails = useSelector((state) => state?.spot?.spot);
     const spotImage = useSelector((state) => state?.spot?.spot?.SpotImages);
     const reviews = useSelector((state) => state?.reviews?.reviews);
@@ -21,8 +20,8 @@ const SpotDetailPage = () => {
     useEffect(() => {
         dispatch(SpotActions.getSpotDetails(spotId));
         dispatch(reviewActions.getSpotReviews(spotId))
-        .then(() => setIsLoaded(true));
-    }, [dispatch, isLoaded]);
+
+    }, [dispatch]);
 
     return (
         <div>

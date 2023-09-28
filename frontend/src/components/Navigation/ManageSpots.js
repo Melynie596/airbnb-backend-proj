@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useHistory } from "react-router-dom/cjs/react-router-dom.min";
+import { Link, useHistory } from "react-router-dom";
 import ConfirmationModal from "../ConfirmationModal/ConfirmationModal";
 import * as spotActions from "../../store/spots"
 
@@ -12,6 +12,7 @@ const ManageSpots = () => {
 
     let spots = useSelector((state) => state?.spot);
     if (spots) spots = Object.values(spots);
+    console.log(spots);
 
     useEffect(() => {
         dispatch(spotActions.getUserSpots());

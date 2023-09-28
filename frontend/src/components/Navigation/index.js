@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import ProfileButton from './ProfileButton';
 import './Navigation.css';
 
-function Navigation({ isLoaded }){
+function Navigation(){
   const sessionUser = useSelector(state => state.session.user);
 
   return (
@@ -12,11 +12,11 @@ function Navigation({ isLoaded }){
       <li>
         <NavLink exact to="/">Home</NavLink>
       </li>
-      {isLoaded && (
+
         <li>
           <ProfileButton user={sessionUser} />
         </li>
-      )}
+
       {sessionUser ? (
         <li>
           <NavLink to='/api/spots/new'>Create a New Spot</NavLink>
