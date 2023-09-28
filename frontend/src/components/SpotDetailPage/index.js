@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 
 import * as SpotActions from "../../store/spots";
+import * as reviewActions from "../../store/reviews";
 import ReserveButton from './ReserveButton';
 import OpenModalButton from "../OpenModalButton";
 
@@ -14,10 +15,12 @@ const SpotDetailPage = () => {
     const [isLoaded, setIsLoaded] = useState(false);
     const spotDetails = useSelector((state) => state?.spot?.spot);
     const spotImage = useSelector((state) => state?.spot?.spot?.SpotImages);
+    const reviews = useSelector((state) => state?.reviews?.reviews);
 
 
     useEffect(() => {
-        dispatch(SpotActions.getSpotDetails(spotId))
+        dispatch(SpotActions.getSpotDetails(spotId));
+        dispatch(reviewActions.getSpotReviews(spotId))
         .then(() => setIsLoaded(true));
     }, [dispatch, isLoaded]);
 
@@ -42,8 +45,8 @@ const SpotDetailPage = () => {
 
         <div>
             <div>
-                <h4>{`$${spotDetails?.price}`}</h4>
-                <p>night</p>
+                <h4>{`$${spotDetails?.price} night`}</h4>
+                <i class="fa-solid fa-star"></i>
                 <p>{spotDetails?.avgRating}</p>
                 <p>{spotDetails?.numReviews}</p>
                 <button type='button'>
@@ -54,6 +57,12 @@ const SpotDetailPage = () => {
                 </button>
             </div>
         </div>
+        {reviews && reviews.map(review => {
+            <div key={review.id}>
+
+            </div>
+        })}
+
         </div>
     );
 }

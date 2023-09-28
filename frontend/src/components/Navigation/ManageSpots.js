@@ -1,22 +1,20 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useHistory, useParams } from "react-router-dom/cjs/react-router-dom.min";
+import { Link, useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import ConfirmationModal from "../ConfirmationModal/ConfirmationModal";
 import * as spotActions from "../../store/spots"
 
 
 const ManageSpots = () => {
-    const { spotId } = useParams();
     const dispatch = useDispatch();
     const history = useHistory();
-    const [spot, setSpot] = useState(null);
+    const [selectedSpot, setSelectedSpot] = useState(null);
 
-    const spots = useSelector((state) => state?.spot);
-    console.log(spots);
+    let spots = useSelector((state) => state?.spot);
     if (spots) spots = Object.values(spots);
 
     useEffect(() => {
-        dispatch(spotActions.getUserSpots(spotId));
+        dispatch(spotActions.getUserSpots());
     }, [dispatch]);
 
     const updateSpot = (spotId) => {
@@ -24,12 +22,12 @@ const ManageSpots = () => {
     };
 
     const deleteSpot = (spotId) => {
-        setSpot(spotId);
+        setSelectedSpot(spotId);
     }
 
     const handleConfirm = (confirmed) => {
-        if (confirmed && spot) {
-            dispatch(spotActions.removeSpot(spot))
+        if (confirmed && selectedSpot) {
+            dispatch(spotActions.removeSpot(selectedSpot))
             .then(() => {
                 window.location.reload();
             })
@@ -37,7 +35,7 @@ const ManageSpots = () => {
                 console.error("Spot deletion failed:", error);
             })
         }
-        setSpot(null);
+        setSelectedSpot(null);
     }
 
     if (!spots || spots.length === 0) {
@@ -61,7 +59,7 @@ const ManageSpots = () => {
             <div>
             {spots && spots.map(spot => {
             return (
-                <div onClick={() => {history.push(`/api/spots/${spot.id}`)}}>
+                <div key={spot.id} onClick={() => {history.push(`/api/spots/${spot.id}`)}}>
                     <img src={spot.previewImage} alt={`house in ${spot.city}`}/>
                     <h4>{`${spot.city}, ${spot.state}`}</h4>
                     <p>{`$${spot.price} night`}</p>
@@ -74,7 +72,7 @@ const ManageSpots = () => {
         })}
             </div>
 
-            {spot && (
+            {selectedSpot && (
                 <ConfirmationModal
                     title="Confirm Delete"
                     message="Are you sure you want to delete this spot?"

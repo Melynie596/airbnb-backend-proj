@@ -7,6 +7,7 @@ import { Route } from "react-router-dom/cjs/react-router-dom.min";
 import SpotsLandingPage from "./components/SpotsLandingPage";
 import SpotDetailPage from "./components/SpotDetailPage";
 import CreateSpotForm from "./components/CreateSpotForm";
+import ManageSpots from "./components/Navigation/ManageSpots";
 
 function App() {
   const dispatch = useDispatch();
@@ -24,6 +25,9 @@ function App() {
         </Route>
         <Route path={'/api/spots/new'}>
           <CreateSpotForm />
+        </Route>
+        <Route path={'/api/spots/manage'}>
+          <ManageSpots />
         </Route>
         <Route path={'/api/spots/:spotId'}>
             <SpotDetailPage />

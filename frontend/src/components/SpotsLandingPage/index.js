@@ -2,7 +2,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import * as SpotsActions from '../../store/spots';
 import "./SpotsLandingPage.css";
-import { Redirect, useHistory } from "react-router-dom/cjs/react-router-dom.min";
+import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 
 const SpotsLandingPage = () => {
     const dispatch = useDispatch();
