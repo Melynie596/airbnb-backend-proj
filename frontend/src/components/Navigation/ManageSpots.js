@@ -10,9 +10,8 @@ const ManageSpots = () => {
     const history = useHistory();
     const [selectedSpot, setSelectedSpot] = useState(null);
 
-    let spots = useSelector((state) => state?.spot);
+    let spots = useSelector((state) => state?.spot?.spots?.Spots);
     if (spots) spots = Object.values(spots);
-    console.log(spots);
 
     useEffect(() => {
         dispatch(spotActions.getUserSpots());
