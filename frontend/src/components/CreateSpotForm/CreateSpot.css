@@ -1,8 +1,7 @@
 .form{
-    display: flex;
-    align-items: center;
+   display: grid;
+    gap: 1rem;
     justify-content: center;
-    height: 100vh;
 }
 
 form {
