@@ -1,0 +1,32 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body{
+    padding-top: 70px;
+}
+
+.container{
+    display: flex;
+
+}
+
+.card {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    flex-wrap: wrap;
+    width: 300px;
+    height: 400px;
+    border: 3px red solid;
+    cursor: pointer;
+}
+
+.spot-preview-image{
+    width: 100%;
+    max-height: 50%;
+    margin-bottom: 10px;
+    border-radius: 10%;
+}

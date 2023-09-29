@@ -8,21 +8,27 @@ function Navigation(){
   const sessionUser = useSelector(state => state.session.user);
 
   return (
-    <ul>
-      <li>
-        <NavLink exact to="/">Home</NavLink>
-      </li>
-
+    <header>
+      <div className='logo'>
+        <NavLink exact to="/" className='home-link'>
+          <i class="fa-brands fa-airbnb"></i>
+          airbnb
+        </NavLink>
+      </div>
+      <nav>
+        <ul>
         <li>
           <ProfileButton user={sessionUser} />
         </li>
-
       {sessionUser ? (
         <li>
-          <NavLink to='/api/spots/new'>Create a New Spot</NavLink>
+          <NavLink className='create-spot-link' to='/api/spots/new'>Create a New Spot</NavLink>
         </li>
       ) : ''}
-    </ul>
+      </ul>
+
+      </nav>
+    </header>
   );
 }
 
