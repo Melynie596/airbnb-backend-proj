@@ -3,15 +3,28 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link, useHistory } from "react-router-dom";
 import ConfirmationModal from "../ConfirmationModal/ConfirmationModal";
 import * as spotActions from "../../store/spots"
+import { useParams } from "react-router-dom";
 
 
 const ManageSpots = () => {
+    const { id } = useParams
     const dispatch = useDispatch();
     const history = useHistory();
     const [selectedSpot, setSelectedSpot] = useState(null);
 
     let spots = useSelector((state) => state?.spot?.spots?.Spots);
     if (spots) spots = Object.values(spots);
+
+    const reviews = useSelector((state) =>
+    Object.values(state.reviews).filter(
+      (review) => review.spotId === parseInt(id)
+    )
+  );
+  const totalReviews = reviews.length;
+  const averageRating =
+    totalReviews > 0
+      ? reviews.reduce((sum, review) => sum + review.stars, 0) / totalReviews
+      : 0;
 
     useEffect(() => {
         dispatch(spotActions.getUserSpots());
@@ -56,19 +69,23 @@ const ManageSpots = () => {
             <Link to='/spots/new'>
                 Create a New Spot
             </Link>
-            <div>
-            {spots && spots.map(spot => {
-            return (
-                <div key={spot.id} onClick={() => {history.push(`/api/spots/${spot.id}`)}}>
-                    <img src={spot.previewImage} alt={`house in ${spot.city}`}/>
-                    <h4>{`${spot.city}, ${spot.state}`}</h4>
-                    <p>{`$${spot.price} night`}</p>
-                    <p>{(spot.avgStarRating === 0) ? "New" : spot.avgStarRating}</p>
-                    <button onClick={() => updateSpot(spot?.id)}>Update</button>
-                    <button onClick={() => deleteSpot(spot?.id)}>Delete</button>
 
-                </div>
-            );
+            <div>
+                {spots && spots.map(spot => {
+                    return (
+                        <div className="spot-card" key={spot.id} onClick={() => {history.push(`/api/spots/${spot.id}`)}}>
+                            <div className="card-image">
+                                <img className="spot-preview-image"src={spot.previewImage} alt={`house in ${spot.city}`}/>
+                            </div>
+                            <div className="spot-info">
+                                <h4>{`${spot.city}, ${spot.state}`}</h4>
+                                <p>{`$${spot.price} night`}</p>
+                                <p>{(spot.avgStarRating === 0) ? "New" : spot.avgStarRating}</p>
+                            </div>
+                            <button onClick={() => updateSpot(spot?.id)}>Update</button>
+                            <button onClick={() => deleteSpot(spot?.id)}>Delete</button>
+                        </div>
+                    );
         })}
             </div>
 

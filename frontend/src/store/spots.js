@@ -155,11 +155,23 @@ export const getUserSpots = () => async (dispatch) => {
 }
 
 export const updateSpot = (spotId, spotData) => async (dispatch) => {
+    const { country, address, city, state, description, name, price, previewImage } = spotData;
     const res = await csrfFetch(`/api/spots/${spotId}`, {
         method: "PUT",
-        body: JSON.stringify(spotData),
+        body: JSON.stringify({
+            country,
+            address,
+            city,
+            state,
+            lat,
+            lng,
+            description,
+            name,
+            price
+        }),
     });
 
+    console.log('here');
     const parsedRes = await res.json();
 
     if (res.ok) {

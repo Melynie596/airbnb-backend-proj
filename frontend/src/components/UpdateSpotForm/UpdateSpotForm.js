@@ -1,21 +1,26 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useParams, useHistory } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 
 import { getSpotDetails, updateSpot } from "../../store/spots";
 
 const UpdateSpotform = () => {
-    const { id } = useParams;
+
     const dispatch = useDispatch();
     const history = useHistory();
 
-    const spot = useSelector((state) => state?.spot?.spots?.Spot[id]);
-    console.log(spot);
+    const spot = useSelector((state) => state?.spot?.spot);
+    const spotPreviewImage = spot?.SpotImages?.url;
+    const id = spot?.id;
+
+
     const [formData, setFormData] = useState({
         country: "",
         address: "",
         city: "",
         state: "",
+        lat: "",
+        lng: "",
         description: "",
         name: "",
         price: "",
@@ -29,10 +34,12 @@ const UpdateSpotform = () => {
                 address: spot.address,
                 city: spot.city,
                 state: spot.state,
+                lat: spot.lat,
+                lng: spot.lng,
                 description: spot.description,
                 name: spot.name,
                 price: spot.price,
-                previewImage: spot.previewImage,
+                previewImage: spotPreviewImage,
             });
         } else {
             dispatch(getSpotDetails(id))
@@ -42,10 +49,12 @@ const UpdateSpotform = () => {
                     address: data.address,
                     city: data.city,
                     state: data.state,
+                    lat: data.lat,
+                    lng: data.lng,
                     description: data.description,
                     name: data.name,
                     price: data.price,
-                    previewImage: data.previewImage,
+                    previewImage: data.SpotImages.url,
                 });
             })
             .catch((err) => console.error(err));
@@ -64,7 +73,7 @@ const UpdateSpotform = () => {
     const handleChange = (e) => {
         setFormData({
             ...formData,
-            [e.target.name]: e.target.value,
+            [e.target.id]: e.target.value,
         })
     }
 
@@ -117,6 +126,26 @@ const UpdateSpotform = () => {
                             placeholder="State"
                         />
                     </div>
+                    <div className="form-input">
+                        <label>Latitude</label>
+                        <input
+                            type='text'
+                            id='lat'
+                            value={formData.lat}
+                            onChange={handleChange}
+                            placeholder="Latitude"
+                        />
+                    </div>
+                    <div className="form-input">
+                        <label>Longitude</label>
+                        <input
+                            type='text'
+                            id='lng'
+                            value={formData.lng}
+                            onChange={handleChange}
+                            placeholder="Longitude"
+                        />
+                    </div>
                 </section>
                 <section>
                     <h2>Describe your place to guests</h2>
@@ -125,6 +154,7 @@ const UpdateSpotform = () => {
                     </p>
                     <div className="form-input">
                         <textarea
+                            id='description'
                             value={formData.description}
                             onChange={handleChange}
                             placeholder="Please write at least 30 characters"
@@ -139,6 +169,7 @@ const UpdateSpotform = () => {
                     <div className="form-input">
                         <input
                             type='text'
+                            id='name'
                             value={formData.name}
                             onChange={handleChange}
                             placeholder="Name of your spot"
@@ -153,6 +184,7 @@ const UpdateSpotform = () => {
                     <div className="form-input">
                         <input
                             type='number'
+                            id='price'
                             value={formData.price}
                             onChange={handleChange}
                             placeholder="Price per night (USD)"
@@ -163,9 +195,9 @@ const UpdateSpotform = () => {
                     <h2>Liven up your spot with photos</h2>
                     <p>Submit a link to at least one photo to publish your spot.</p>
                     <div className="form-input">
-                        <label>Country</label>
                         <input
                             type='text'
+                            id='previewImage'
                             value={formData.previewImage}
                             onChange={handleChange}
                             placeholder="Preview Image URL"

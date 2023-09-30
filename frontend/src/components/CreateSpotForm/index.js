@@ -12,6 +12,8 @@ const CreateSpotForm = () => {
     const [address, setAddress] = useState('');
     const [city, setCity] = useState('');
     const [state, setState] = useState('');
+    const [lat, setLat] = useState(80);
+    const [lng, setLng] = useState(180);
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
     const [price, setPrice] = useState('');
@@ -46,6 +48,8 @@ const CreateSpotForm = () => {
                 address: address,
                 city,
                 state,
+                lng,
+                lat,
                 name: name,
                 description,
                 price: Number(price),
@@ -58,23 +62,24 @@ const CreateSpotForm = () => {
                     preview: true,
                 }));
 
-                images.forEach(async (image) => {
+                for (let i = 0; i < images.length - 1; i++) {
+                    const image = images[i];
                     if (image) {
                         await dispatch(spotActions.addSpotImage(spot.id, {
                             url: image,
                             preview: false
                         }))
                     }
-                })
+                }
 
                 history.push(`/spots/${spot.id}`);
 
             } catch (error) {
 
                 console.log("Couldn't create spot", error)
-                setSubmit(false);
 
             }
+            setSubmit(false);
 
         }
 
@@ -132,6 +137,26 @@ const CreateSpotForm = () => {
                             placeholder="State"
                         />
                         {errors.state && <p className="error-message">{errors.state}</p>}
+                    </div>
+                    <div className="form-input">
+                        <label>Latitude</label>
+                        <input
+                            type='text'
+                            id='lat'
+                            value={lat}
+                            onChange={(e) => setLat(e.target.value)}
+                            placeholder="Latitude"
+                        />
+                    </div>
+                    <div className="form-input">
+                        <label>Longitude</label>
+                        <input
+                            type='text'
+                            id='lng'
+                            value={lng}
+                            onChange={(e) => setLng(e.target.value)}
+                            placeholder="Longitude"
+                        />
                     </div>
                 </section>
                 <section>
