@@ -1,0 +1,16 @@
+.error {
+    color: red;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.description textarea {
+    height: 100px;
+    resize: none;
+    width: 100%;
+}

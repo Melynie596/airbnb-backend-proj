@@ -6,6 +6,7 @@ import LoginFormModal from '../LoginFormModal';
 import SignupFormModal from '../SignupFormModal';
 import "./ProfileButton.css"
 import { useHistory } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 function ProfileButton({ user }) {
   const dispatch = useDispatch();
@@ -38,56 +39,52 @@ function ProfileButton({ user }) {
     e.preventDefault();
     dispatch(sessionActions.logout());
     closeMenu();
+    history.push('/');
   };
-
-  const manageSpots = (e) => {
-    e.preventDefault();
-    history.push("/api/spots/manage");
-    closeMenu();
-  }
 
   const ulClassName = "profile-dropdown" + (showMenu ? "" : " hidden");
 
   return (
     <>
-      <button onClick={openMenu}>
+      <button className='dropdown' onClick={openMenu}>
         <i class="fa-solid fa-bars"></i>
         <i className="fas fa-user-circle" />
       </button>
-      <ul className={ulClassName} ref={ulRef}>
-        {user ? (
-          <>
-            <li>{`Hello, ${user.firstName}`}</li>
-            <li>{user.email}</li>
-            <li>
-              <button onClick={manageSpots}>Manage Spots</button>
-            </li>
-            <li>
-              <button onClick={logout}>Log Out</button>
-            </li>
-          </>
-        ) : (
-          <>
-            <li>
-              <OpenModalButton
-                buttonText="Log In"
-                onButtonClick={closeMenu}
-                modalComponent={<LoginFormModal />}
-              />
-            </li>
-            <li>
-              <OpenModalButton
-                buttonText="Sign Up"
-                onButtonClick={closeMenu}
-                modalComponent={<SignupFormModal />}
-              />
-            </li>
-            <li>
-
-            </li>
-          </>
-        )}
-      </ul>
+      <div className="dropdown-menu">
+        <ul className={ulClassName} ref={ulRef}>
+          {user ? (
+            <>
+              <li>{`Hello, ${user.firstName}`}</li>
+              <li>{user.email}</li>
+              <li className="manage-spots">
+                <Link to='api/spots/manage'>
+                  Manage Spots
+                </Link>
+              </li>
+              <li>
+                <button className="logout-button" onClick={logout}>Log Out</button>
+              </li>
+           </>
+          ) : (
+            <>
+             <li>
+                <OpenModalButton
+                  buttonText="Log In"
+                  onButtonClick={closeMenu}
+                  modalComponent={<LoginFormModal />}
+                />
+              </li>
+              <li>
+                <OpenModalButton
+                  buttonText="Sign Up"
+                  onButtonClick={closeMenu}
+                  modalComponent={<SignupFormModal />}
+                />
+              </li>
+            </>
+          )}
+        </ul>
+      </div>
     </>
   );
 }

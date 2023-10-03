@@ -29,10 +29,20 @@ function LoginFormModal() {
     setPassword('password');
   }
 
+  let loginButton;
+
+  if (credential.length < 4 || password.length < 6) {
+    loginButton = <button type="submit" disabled className="login-buttons log-in">Log In</button>
+  } else {
+    loginButton = <button type="submit" className="login-buttons log-in">Log In</button>
+  }
+
+
   return (
-    <>
+    <div className="login-form">
       <h1>Log In</h1>
-      <form onSubmit={handleSubmit}>
+      <form className="login-inputs" onSubmit={handleSubmit}>
+          {errors.credential && <p>{errors.credential}</p>}
         <label>
           Username or Email
           <input
@@ -42,6 +52,7 @@ function LoginFormModal() {
             required
           />
         </label>
+        {errors.password && <p>{errors.password}</p>}
         <label>
           Password
           <input
@@ -51,13 +62,10 @@ function LoginFormModal() {
             required
           />
         </label>
-        {errors.credential && (
-          <p>{errors.credential}</p>
-        )}
-        <button type="submit">Log In</button>
-        <button type='submit' onClick={(e) => demoSignIn(e)}>Demo User</button>
+        <>{loginButton}</>
+        <button className="login-buttons demo-user" type='submit' onClick={(e) => demoSignIn(e)}>Demo User</button>
       </form>
-    </>
+    </div>
   );
 }
 

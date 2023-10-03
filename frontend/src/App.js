@@ -7,7 +7,7 @@ import { Route } from "react-router-dom";
 import SpotsLandingPage from "./components/SpotsLandingPage";
 import SpotDetailPage from "./components/SpotDetailPage";
 import CreateSpotForm from "./components/CreateSpotForm";
-import ManageSpots from "./components/Navigation/ManageSpots";
+import ManageSpots from "./components/ManageSpots";
 import UpdateSpotform from "./components/UpdateSpotForm/UpdateSpotForm";
 
 function App() {

@@ -16,16 +16,16 @@ function Navigation(){
         </NavLink>
       </div>
       <nav>
-        <ul>
-        <li>
-          <ProfileButton user={sessionUser} />
-        </li>
-      {sessionUser ? (
-        <li>
-          <NavLink className='create-spot-link' to='/api/spots/new'>Create a New Spot</NavLink>
-        </li>
-      ) : ''}
-      </ul>
+        <ul className='user-links'>
+          <li className='profile-button'>
+            <ProfileButton user={sessionUser} />
+          </li>
+          {sessionUser ? (
+             <li>
+              <NavLink className='create-spot-link' to='/api/spots/new'>Create a New Spot</NavLink>
+            </li>
+          ) : ''}
+        </ul>
 
       </nav>
     </header>

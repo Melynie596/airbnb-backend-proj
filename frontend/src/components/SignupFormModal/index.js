@@ -3,9 +3,11 @@ import { useDispatch } from "react-redux";
 import { useModal } from "../../context/Modal";
 import * as sessionActions from "../../store/session";
 import "./SignupForm.css";
+import { useHistory } from "react-router-dom";
 
 function SignupFormModal() {
   const dispatch = useDispatch();
+  const history = useHistory();
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [firstName, setFirstName] = useState("");
@@ -29,6 +31,7 @@ function SignupFormModal() {
         })
       )
         .then(closeModal)
+        .then(history.push('/'))
         .catch(async (res) => {
           const data = await res.json();
           if (data && data.errors) {
@@ -41,75 +44,84 @@ function SignupFormModal() {
     });
   };
 
+  let signupButton;
+
+  if (username.length < 4 || password.length < 4 || !email || !firstName || !lastName || !confirmPassword) {
+    signupButton = <button type="submit" disabled className="signup-button">Sign Up</button>
+  } else {
+    signupButton = <button type="submit" className="signup-button">Sign Up</button>
+  }
+
   return (
-    <>
-      <h1>Sign Up</h1>
-      <form onSubmit={handleSubmit}>
-        <label>
-          Email
+    <div className="signup-form">
+      <h1 className="signup-header">Sign Up</h1>
+      <form className="signup-inputs"onSubmit={handleSubmit}>
+
+
           <input
             type="text"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            placeholder="Email"
             required
           />
-        </label>
-        {errors.email && <p>{errors.email}</p>}
-        <label>
-          Username
+
+        {errors.email && <p className="error-message">{errors.email}</p>}
+
           <input
             type="text"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
+            placeholder="Username"
             required
           />
-        </label>
-        {errors.username && <p>{errors.username}</p>}
-        <label>
-          First Name
+
+        {errors.username && <p className="error-message">{errors.username}</p>}
+
           <input
             type="text"
             value={firstName}
             onChange={(e) => setFirstName(e.target.value)}
+            placeholder="First Name"
             required
           />
-        </label>
-        {errors.firstName && <p>{errors.firstName}</p>}
-        <label>
-          Last Name
+
+        {errors.firstName && <p className="error-message">{errors.firstName}</p>}
+
           <input
             type="text"
             value={lastName}
             onChange={(e) => setLastName(e.target.value)}
+            placeholder="Last Name"
             required
           />
-        </label>
-        {errors.lastName && <p>{errors.lastName}</p>}
-        <label>
-          Password
+
+        {errors.lastName && <p className="error-message">{errors.lastName}</p>}
+
           <input
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            placeholder="Password"
             required
           />
-        </label>
-        {errors.password && <p>{errors.password}</p>}
-        <label>
-          Confirm Password
+
+        {errors.password && <p className="error-message">{errors.password}</p>}
+
           <input
             type="password"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
+            placeholder="Confirm Password"
             required
           />
-        </label>
+
         {errors.confirmPassword && (
-          <p>{errors.confirmPassword}</p>
+          <p className="error-message">{errors.confirmPassword}</p>
         )}
-        <button type="submit">Sign Up</button>
+        <div>{signupButton}</div>
       </form>
-    </>
+    </div>
   );
 }
 

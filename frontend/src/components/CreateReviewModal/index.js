@@ -1,111 +1,91 @@
-import React, { useState } from "react";
+import React, {useContext, useState} from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { createReview, deleteReview } from "../../store/reviews";
-import DeleteModal from "./DeleteModal";
+import { useHistory, useParams } from "react-router-dom";
+import { createReview } from "../../store/reviews";
+import { context } from '../Modal/index';
+import StarRating from "./starRating";
+import { ReviewContext } from "./reviewContext";
+import "./newReview.css"
 
-const CreateReviewModal = ({ closeModal, spotId, onSubmit }) => {
-  const dispatch = useDispatch();
-  const loggedInUser = useSelector((state) => state.session.user);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
-  const [comment, setComment] = useState("");
-  const [rating, setRating] = useState(0);
-  const [errors, setErrors] = useState({});
+function CreateReview () {
+    const { spotId } = useParams();
+    const history = useHistory();
+    const dispatch = useDispatch();
+    const [stars, setStars] = useState(null);
+    const [review, setReview] = useState("");
+    const [errors, setErrors] = useState({});
+    const { setModal } = useContext(context);
 
-  const handleSubmit = async () => {
-    // Validate form inputs
-    const validationErrors = {};
-    if (comment.length < 10) {
-      validationErrors.comment = "Comment must be at least 10 characters long";
-    }
-    if (rating === 0) {
-      validationErrors.rating = "Please select a rating";
-    }
+    const handleSubmit = async (e) => {
+        e.preventDefault();
 
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
-      return;
-    }
+        setErrors({});
 
-    // Create the review
-    const newReview = {
-      spotId,
-      review: comment,
-      stars: rating,
+        const payload = {
+            review,
+            stars
+        };
+
+        let createdReview = await dispatch(createReview(spotId, payload)).catch(
+            async (res) => {
+                const data = await res.json();
+                if (data && data.errors) {
+                    setErrors(data.errors);
+                } else if (data) {
+                    setErrors(data)
+                }
+            }
+        );
+        if(createdReview) {
+            setModal(false)
+            window.location.reload()
+        }
     };
 
-    await dispatch(createReview(newReview));
-    // Reset form inputs
-    setComment("");
-    setRating(0);
-    setErrors({});
-    // Call the onSubmit callback
-    onSubmit(newReview);
-  };
+    let button;
 
-  const handleDeleteReview = () => {
-    setShowDeleteModal(true);
-  };
-
-  const handleDeleteConfirmation = (confirmed) => {
-    if (confirmed) {
-      dispatch(deleteReview(spotId));
+    if(review.length < 10) {
+        button = <button type="submit" disabled>Submit Your Review</button>
+    } else  {
+        button = <button type="submit">Submit Your Review</button>;
     }
-    setShowDeleteModal(false);
-  };
 
-  const handleStarClick = (starIndex) => {
-    const newRating = starIndex + 1;
-    setRating(newRating);
-  };
+    let errMsg;
 
-  const renderStars = () => {
-    const stars = [];
-    for (let i = 0; i < 5; i++) {
-      const starIcon = i < rating ? "fa-solid fa-star" : "fa-duotone fa-star";
-      stars.push(
-        <i
-          key={i}
-          className={`fa ${starIcon} star ${i < rating ? "active" : ""}`}
-          onMouse={() => setRating(i + 1)}
-          onClick={() => handleStarClick(i)}
-        ></i>
-      );
+    if (errors.review) {
+        errMsg = `*${errors.description}`
+    } else if (errors.stars) {
+        errMsg = `*${errors.rating}`
+    } else if (errors.message) {
+        errMsg = `*${errors.message}`
     }
-    return stars;
-  };
 
-  return (
-    <div className="create-review-modal">
-      <h3>How was your stay?</h3>
-      {errors.server && <div className="error">{errors.server}</div>}
-      <textarea
-        placeholder="Leave your review here..."
-        value={comment}
-        onChange={(e) => setComment(e.target.value)}
-      ></textarea>
-      {errors.comment && <div className="error">{errors.comment}</div>}
-      <label>Stars</label>
-      <div className="star-rating">{renderStars()}</div>
-      {errors.rating && <div className="error">{errors.rating}</div>}
-      <button disabled={comment.length < 10} onClick={handleSubmit}>
-        Submit Your Review
-      </button>
-      {loggedInUser && loggedInUser.id === spotId && (
-        <button className="delete-button" onClick={handleDeleteReview}>
-          Delete Review
-        </button>
-      )}
-      {showDeleteModal && (
-        <DeleteModal
-          title="Confirm Delete"
-          message="Are you sure you want to delete this review?"
-          onAction={handleDeleteConfirmation}
-        />
-      )}
-      <button onClick={closeModal}>Cancel</button>
-    </div>
-  );
+    return (
+        <div>
+            <div>
+             <h2>How was your stay?</h2>
+             <form onSubmit={handleSubmit}>
+                <div>
+                    <label>
+                        Review
+                        <textarea type="text" placeholder="Leave your review here..." value={review} onChange={(e) => setReview(e.target.value)}
+                        required
+                        />
+                    </label>
+                    <div>
+                        {errMsg}
+                    </div>
+                </div>
+                    <ReviewContext.Provider value={{stars, setStars}}>
+                        <StarRating  />
+                    </ReviewContext.Provider>
+                    {button}
+             </form>
+
+            </div>
+        </div>
+    )
 };
 
-export default CreateReviewModal;
+export default CreateReview;

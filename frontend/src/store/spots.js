@@ -104,6 +104,7 @@ export const createASpot = (spot) => async(dispatch) => {
     })
     })
 
+
     const parsedRes = await res.json();
 
     if (res.ok) {
@@ -155,7 +156,7 @@ export const getUserSpots = () => async (dispatch) => {
 }
 
 export const updateSpot = (spotId, spotData) => async (dispatch) => {
-    const { country, address, city, state, description, name, price, previewImage } = spotData;
+    const { country, address, city, state, description, name, price, lat, lng } = spotData;
     const res = await csrfFetch(`/api/spots/${spotId}`, {
         method: "PUT",
         body: JSON.stringify({
@@ -171,7 +172,6 @@ export const updateSpot = (spotId, spotData) => async (dispatch) => {
         }),
     });
 
-    console.log('here');
     const parsedRes = await res.json();
 
     if (res.ok) {
@@ -195,8 +195,7 @@ const spotsReducer = (state = initialState, action) => {
             newState.spot = action.payload;
             return newState;
         case CREATE_SPOT:
-            newState = Object.assign({}, state);
-            newState.spot = action.payload;
+            newState[action.spot.id] = action.spot;
             return newState;
         case ADD_SPOT_IMAGE:
             newState = Object.assign({}, state);

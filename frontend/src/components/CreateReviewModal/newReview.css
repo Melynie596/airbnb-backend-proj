@@ -1,0 +1,13 @@
+
+input[type="radio"] {
+    display: none;
+}
+
+.fas {
+    cursor: pointer;
+    transition: color 200ms;
+}
+
+.fas:active {
+    color: yellow;
+}

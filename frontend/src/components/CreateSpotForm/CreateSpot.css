@@ -1,13 +1,60 @@
 .form{
-   display: grid;
-    gap: 1rem;
-    justify-content: center;
-}
-
-form {
-    padding: 0px 60px;
+    display: flex;
+    flex-direction: column;
+    padding-left: 50%;
 }
 
 h1{
-    text-align: center;
+    padding-bottom: 10px;
+}
+
+h2{
+    padding: 7px 0;
+}
+
+.section-description{
+    padding-bottom: 10px;
+}
+
+.form-input{
+    display: flex;
+    flex-direction: column;
+    padding: 5px 0;
+}
+
+input{
+    background-color: rgba(232,240,254, 0.5);
+    border: 2px solid black;
+    padding: 7px 0;
+    width: 100%;
+}
+
+textarea{
+    background-color: rgba(232,240,254, 0.5);
+    border: 2px solid black;
+}
+
+.price-input {
+    display: flex;
+}
+
+.dollar-sign{
+    font-weight: bold;
+}
+
+.create-button-container{
+    display: flex;
+    justify-content: center;
+    padding: 5px;
+
+}
+
+.create-button{
+    background-color: #FF385C;
+    color: white;
+    padding: 10px;
+}
+
+section{
+    border-bottom: 1px solid black;
 }

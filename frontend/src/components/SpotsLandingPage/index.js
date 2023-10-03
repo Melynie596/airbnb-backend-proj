@@ -19,13 +19,16 @@ const SpotsLandingPage = () => {
                 {spots && spots.map(spot => {
                     return (
                         <div className="spot-card" key={spot.id} onClick={() => {history.push(`/api/spots/${spot.id}`)}}>
-                            <div className="card-image">
+
                                 <img className="spot-preview-image"src={spot.previewImage} alt={`house in ${spot.city}`}/>
-                            </div>
+
                             <div className="spot-info">
-                                <h4>{`${spot.city}, ${spot.state}`}</h4>
-                                <p>{`$${spot.price} night`}</p>
-                                <p>{(spot.avgStarRating === 0) ? "New" : spot.avgStarRating}</p>
+                                <h4 className="card-location">{`${spot.city}, ${spot.state}`}</h4>
+                                <p className="card-rating">
+                                <i class="fa-solid fa-star"></i>
+
+                                    {(spot.avgStarRating === 0) ? "New" : spot.avgStarRating}</p>
+                                <p className="card-price">{`$${spot.price} night`}</p>
                             </div>
 
                         </div>
